@@ -15,6 +15,12 @@ import util
 import time
 from datetime import datetime
 import MongodbOperation
+from mongoengine import Document, EmailField, StringField, BooleanField, queryset_manager
+from passlib.apps import custom_app_context as pwd_context
+#from passlib.hash import pbkdf2_sha256
+#from passlib.utils import consteq
+
+
 
 def newUpload(documentname):
         try:
