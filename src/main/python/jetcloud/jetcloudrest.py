@@ -5,13 +5,46 @@ Created on 2015年5月29日
 @author: aadebuger
 '''
 from flask import Flask
+from flask import abort,jsonify
 from flask_restful import Resource, Api,request
 import MongoResource
 import json
 import cloudfile
+from mongoengine import * 
+from MongoResource import User
+from passlib.apps import custom_app_context as pwd_context
 app = Flask(__name__)
 api = Api(app)
 
+class User(Document):
+#    email = EmailField(required=True, unique=True)
+    password = StringField(required=True)
+    username = StringField(required=True)
+    activated = BooleanField(default=False)
+    email = EmailField()
+    MobilePhoneNumber =StringField()
+    
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+        
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)    
+        
+    def generate_auth_token(self, expiration=600):
+#        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+#        return s.dumps({'id': self.id})
+        pass
+    @classmethod
+    def register(cls, email, password, activated=False, name=''):
+        user = cls()
+        user.email = email
+        user.name = name
+        user.activated = activated
+        user.set_password(password)
+        user.save()
+
+        return user
+    
 class HelloWorld(Resource):
     def get(self):
         return {'hello': 'world'}
@@ -24,7 +57,7 @@ def save_upload(filename):
 #    print 'file=',file
 
 #    if file and allowed_file(file.filename):
-        print 'data len',len(request.data)
+#        print 'data len',len(request.data)
         
         mediaid = MongoResource.newUpload("media");                
 #        filename = secure_filename(file.filename)
@@ -41,6 +74,27 @@ def save_upload(filename):
         
 #        abort(404, message="mimetype error")
 
+
+@app.route('/api/users', methods=['POST'])
+def new_user():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    if username is None or password is None:
+        abort(400)    # missing arguments
+    User.objects.all()
+    
+    if User.objects.filter(username=username).first() is not None:
+        abort(400)    # existing user
+    user = User(username=username)
+    user.hash_password(password)
+#    db.session.add(user)
+#    db.session.commit()
+    return (jsonify({'username': user.username}), 201)
+    
+#    return (jsonify({'username': user.username}), 201,
+#            {'Location': url_for('get_user', id=user.id, _external=True)})
+    
+    
 class Store(MongoResource.MResource):
     def __init__(self):
         '''
