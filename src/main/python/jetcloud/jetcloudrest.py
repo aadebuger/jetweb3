@@ -11,7 +11,7 @@ import MongoResource
 import json
 import cloudfile
 from mongoengine import * 
-from MongoResource import User
+import util
 from passlib.apps import custom_app_context as pwd_context
 app = Flask(__name__)
 api = Api(app)
@@ -25,7 +25,7 @@ class User(Document):
     MobilePhoneNumber =StringField()
     
     def hash_password(self, password):
-        self.password_hash = pwd_context.encrypt(password)
+        self.password = pwd_context.encrypt(password)
         
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)    
@@ -75,25 +75,57 @@ def save_upload(filename):
 #        abort(404, message="mimetype error")
 
 
+@app.route('/1.1/neworderno', methods=['get'])
+def newOrderno():
+            neworderno = MongoResource.newOrderno("number")
+            return (jsonify({'orderno': neworderno}), 200)
+         
 @app.route('/api/users', methods=['POST'])
 def new_user():
-    username = request.json.get('username')
-    password = request.json.get('password')
-    if username is None or password is None:
-        abort(400)    # missing arguments
-    User.objects.all()
-    
-    if User.objects.filter(username=username).first() is not None:
-        abort(400)    # existing user
-    user = User(username=username)
-    user.hash_password(password)
-#    db.session.add(user)
-#    db.session.commit()
-    return (jsonify({'username': user.username}), 201)
-    
+     try:
+            print 'new_user'
+            username = request.json.get('username')
+            password = request.json.get('password')
+            if username is None or password is None:
+                abort(400)    # missing arguments
+            print 'username=',username
+            print 'password=',password
+            User.objects.all()
+            print 'test1'
+            if User.objects.filter(username=username).first() is not None:
+                abort(400)    # existing user
+            user = User(username=username)
+            user.hash_password(password)
+            user.save()
+        #    db.session.add(user)
+        #    db.session.commit()
+            return (jsonify({'username': user.username}), 201)
+     except Exception,e:
+            print e
 #    return (jsonify({'username': user.username}), 201,
 #            {'Location': url_for('get_user', id=user.id, _external=True)})
-    
+
+@app.route('/1.1/login', methods=['get'])
+def login():
+     try:
+            print 'login'
+            username = request.args.get('username')
+            password = request.args.get('password')
+            if username is None or password is None:
+                abort(400)    # missing arguments
+            print 'username=',username
+            print 'password=',password
+            user =User.objects.filter(username=username).first()
+            if  user is not None:
+                return (jsonify(user ), 201)
+        
+            else:
+                abort(400)
+        #    db.session.add(user)
+        #    db.session.commit()
+            return (jsonify({'username': user.username}), 201)
+     except Exception,e:
+            print e
     
 class Store(MongoResource.MResource):
     def __init__(self):
@@ -140,4 +172,5 @@ api.add_resource(feedback, '/1.1/classes/feedback/<string:todo_id>')
 
 
 if __name__ == '__main__':
+    connect('stylemaster',host=util.getMydbip())
     app.run(debug=True)
