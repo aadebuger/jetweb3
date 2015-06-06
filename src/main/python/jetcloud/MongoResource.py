@@ -8,7 +8,13 @@ Created on 2015年5月30日
 import json
 from flask import Flask, request
 from flask.ext.restful import reqparse, abort, Api, Resource
-from pymongo import MongoClient 
+from pymongo import MongoClient
+from pymongo import collection
+#from pymongo import ReturnDocument
+
+
+from pymongo import collection
+
 from bson import json_util
 from bson.objectid import ObjectId
 import util
@@ -19,9 +25,23 @@ from mongoengine import Document, EmailField, StringField, BooleanField, queryse
 from passlib.apps import custom_app_context as pwd_context
 #from passlib.hash import pbkdf2_sha256
 #from passlib.utils import consteq
+from pymongo import read_preferences
 
 
+def getNextSequence(documentname):
+        print 'getNextSequence'
+        client = MongoClient(util.getMydbip())
+        db = client.test_database    
+#        ret = db[documentname].find_one_and_update(   {'_id': 'userid'}, {'$inc': {'seq': 1}},  projection={'seq': True, '_id': False}, upsert=True, return_document=ReturnDocument.AFTER)
+        ret = db[documentname].find_and_modify(   {'_id': 'orderid1'}, {'$inc': {'seq': 1}},  projection={'seq': True, '_id': False}, upsert=True,new=True)
 
+        print ret
+        return  ret['seq'];
+def newOrderno(document):
+            updatedAt= time.strftime('%Y%m%d%H%M%S')
+            incnumber = getNextSequence("incnumber")
+            order_no = "%s%03d"%(updatedAt,int(incnumber)%1000)
+            return order_no
 def newUpload(documentname):
         try:
             client = MongoClient(util.getMydbip())
