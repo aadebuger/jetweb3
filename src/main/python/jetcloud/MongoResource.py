@@ -28,6 +28,17 @@ from passlib.apps import custom_app_context as pwd_context
 from pymongo import read_preferences
 
 
+def updateDocument(document,todo_id,json):
+
+            client = MongoClient(util.getMydbip())
+            try:
+                del request.json["id"];
+            except Exception,e:
+                    print e
+            db = client.test_database
+            ret = db[document].update({'_id': ObjectId(todo_id)},{"$set":json})
+                 
+                    
 def getNextSequence(documentname):
         print 'getNextSequence'
         client = MongoClient(util.getMydbip())
