@@ -35,6 +35,7 @@ def updateDocument(document,todo_id,json):
                 del request.json["id"];
             except Exception,e:
                     print e
+                    return 
             db = client.test_database
             ret = db[document].update({'_id': ObjectId(todo_id)},{"$set":json})
                  
