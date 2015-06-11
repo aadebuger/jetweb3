@@ -13,6 +13,9 @@ class Test(unittest.TestCase):
     def testNewBucketUpload(self):
             ret=MongoResource.newBucketUpload("files",32,"testbucket","222.qiniu.com","hello.txt")
             print 'ret=',ret
+    def testNextSequence(self):
+            ret = MongoResource.getNextSequence("number")
+            print 'ret seq=',ret
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
