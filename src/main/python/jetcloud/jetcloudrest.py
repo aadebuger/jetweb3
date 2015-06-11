@@ -7,7 +7,7 @@ Created on 2015年5月29日
 from flask import Flask
 from flask import abort,jsonify
 from flask_restful import Resource, Api,request,url_for
-import MongoResource
+
 import json
 import cloudfile
 from mongoengine import * 
@@ -20,7 +20,8 @@ import time
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 
-
+import MongoResource
+import MongoAclResource
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
@@ -91,6 +92,7 @@ class User(Document):
         except BadSignature:
             print 'none2'
             return None    # invalid token
+        print 'data=',data
         user =User.objects(pk=data).first()
         return user
     @classmethod
@@ -327,7 +329,75 @@ def verifyMobilePhone(smscode):
 
      except Exception,e:
             print e
-            
+   
+
+class Barber(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="barber"
+class BarberList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="barber"
+
+
+class Shop(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="shop"
+class ShopList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="shop"
+
+class Hairstyle(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="hairstyle"
+class HairstyleList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="hairstyle"    
+
+class Order(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="order"
+class OrderList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="order"     
+
+class Makeup(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="makeup"
+class MakeupList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="makeup"                     
+                    
+                    
 class Store(MongoResource.MResource):
     def __init__(self):
         '''
@@ -364,12 +434,46 @@ class feedbackList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="feedback"
+
+class users(MongoAclResource.MAclResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="Users"
+        
+
+
+api.add_resource(BarberList, '/1.1/classes/barber')
+api.add_resource(Barber, '/1.1/classes/barber/<string:story_id>')
+
+
+
+api.add_resource(ShopList, '/1.1/classes/shop')
+api.add_resource(Shop, '/1.1/classes/shop/<string:story_id>')
+
+api.add_resource(HairstyleList, '/1.1/classes/hairstyle')
+api.add_resource(Hairstyle, '/1.1/classes/hairstyle/<string:story_id>')
+
+
+
+api.add_resource(OrderList, '/1.1/classes/order')
+api.add_resource(Order, '/1.1/classes/order/<string:story_id>')
+
+api.add_resource(MakeupList, '/1.1/classes/makeup')
+api.add_resource(Makeup, '/1.1/classes/makeup/<string:story_id>')
+
+
+
+
 api.add_resource(StoreList, '/store')
 api.add_resource(Store, '/store/<string:story_id>')
 api.add_resource(GameScoreList, '/1.1/classes/GameScore')
 api.add_resource(GameScore, '/1.1/classes/GameScore/<string:todo_id>')
 api.add_resource(feedbackList, '/1.1/classes/feedback')
 api.add_resource(feedback, '/1.1/classes/feedback/<string:todo_id>')
+api.add_resource(users, '/1.1/classes/users/<string:todo_id>')
+
 
 
 if __name__ == '__main__':
