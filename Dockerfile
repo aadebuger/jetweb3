@@ -5,5 +5,5 @@ run pip install flask
 run pip install pymongo
 run pip install mongoengine
 EXPOSE 5000
-workding /code
+workdir /code
 CMD ["python", "jetcloud/jetcloudrest.py"]
