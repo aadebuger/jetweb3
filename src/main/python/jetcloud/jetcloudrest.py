@@ -376,4 +376,4 @@ if __name__ == '__main__':
 #    connect('stylemaster',host=util.getMydbip())
     connect('stylemaster',host=util.getMydbip(),read_preference=read_preferences.ReadPreference.PRIMARY)
             
-    app.run(debug=True)
+    app.run(host="0.0.0.0",debug=True)
