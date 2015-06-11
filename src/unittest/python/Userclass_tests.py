@@ -14,6 +14,9 @@ class Test(unittest.TestCase):
 
 
     def testName(self):
+            connect('stylemaster',host=util.getMydbip(),read_preference=read_preferences.ReadPreference.PRIMARY)
+
+
             oid="5577c699421aa912020de9ad"
             user= jetcloudrest.User.objects(pk=oid).first()
             if user is None:
