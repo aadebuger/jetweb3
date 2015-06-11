@@ -16,6 +16,8 @@ class Test(unittest.TestCase):
     def testName(self):
             oid="5577c699421aa912020de9ad"
             user= jetcloudrest.User.objects(pk=oid).first()
+            if user is None:
+                return 
             print 'user=',user
             print 'user username',user.username
             print 'user smscode=',user.smscode
