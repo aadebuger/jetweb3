@@ -6,7 +6,7 @@ Created on 2015年5月29日
 '''
 from flask import Flask
 from flask import abort,jsonify
-from flask_restful import Resource, Api,request,url_for
+from flask_restful import reqparse,Resource, Api,request,url_for
 
 import json
 import cloudfile
@@ -25,6 +25,9 @@ import MongoAclResource
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
+
+parser = reqparse.RequestParser()
+parser.add_argument('title', type=str)
 
 def allow_cross_domain(fun):
     @wraps(fun)
@@ -384,6 +387,20 @@ class OrderList(MongoResource.MResourceList):
         '''
         self.documentname ="order"     
 
+class Service(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="service"
+class ServiceList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="service"   
+        
+        
 class Makeup(MongoResource.MResource):
     def __init__(self):
         '''
@@ -445,23 +462,26 @@ class users(MongoAclResource.MAclResource):
 
 
 api.add_resource(BarberList, '/1.1/classes/barber')
-api.add_resource(Barber, '/1.1/classes/barber/<string:story_id>')
+api.add_resource(Barber, '/1.1/classes/barber/<string:todo_id>')
 
 
 
 api.add_resource(ShopList, '/1.1/classes/shop')
-api.add_resource(Shop, '/1.1/classes/shop/<string:story_id>')
+api.add_resource(Shop, '/1.1/classes/shop/<string:todo_id>')
 
 api.add_resource(HairstyleList, '/1.1/classes/hairstyle')
-api.add_resource(Hairstyle, '/1.1/classes/hairstyle/<string:story_id>')
+api.add_resource(Hairstyle, '/1.1/classes/hairstyle/<string:todo_id>')
 
+
+api.add_resource(ServiceList, '/1.1/classes/service')
+api.add_resource(Service, '/1.1/classes/service/<string:todo_id>')
 
 
 api.add_resource(OrderList, '/1.1/classes/order')
-api.add_resource(Order, '/1.1/classes/order/<string:story_id>')
+api.add_resource(Order, '/1.1/classes/order/<string:todo_id>')
 
 api.add_resource(MakeupList, '/1.1/classes/makeup')
-api.add_resource(Makeup, '/1.1/classes/makeup/<string:story_id>')
+api.add_resource(Makeup, '/1.1/classes/makeup/<string:todo_id>')
 
 
 
