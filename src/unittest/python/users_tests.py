@@ -63,7 +63,8 @@ class Test(unittest.TestCase):
                          headers={'X-AVOSCloud-Session-Token': 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTQzNDI4NTE5NCwiaWF0IjoxNDMzOTI1MTk0fQ.IjU1NzdjNjk5NDIxYWE5MTIwMjBkZTlhZCI.xj4NORTV7FwHEpZlgjylay08YzsHVMzvS9VOea3CmNc'})
                 
         print 'VerifyMobilePhone rv=',rv
-        print 'VerifyMobilePhone rv=',rv.data                 
+        print 'VerifyMobilePhone rv=',rv.data     
+            
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
