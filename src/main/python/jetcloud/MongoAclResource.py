@@ -17,7 +17,7 @@ from MongoResource import MResource
 
 import util
 #from  jetcloudrest import User
-import jetcloudrest
+#import jetcloudrest
 def getObjectid(request):
             value = request.headers.get('X-AVOSCloud-Session-Token')
             print 'value=',value
