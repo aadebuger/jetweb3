@@ -109,7 +109,7 @@ class MResourceList(Resource):
         
         
 #        ret = db.news.find_one()
-        if searchword=='':
+        if searchword=='' or searchword=='{}':
             print 'searchword=null'
 #sort({"createdAt":-1})            
             try: 
@@ -138,10 +138,12 @@ class MResourceList(Resource):
                 news['id']=oid
             newsv.append(news)
         print 'newsv=',newsv
+        retdict={}
+        retdict['results']=newsv
 #        return json.dumps(newsv,default=json_util.default)        
         retstr= json.dumps(newsv,default=json_util.default)  
         newdict = json.loads(retstr)  
-        return newdict
+        return retdict
     def post(self):
         print "post=",request
         if not self.before_save():
@@ -157,7 +159,8 @@ class MResourceList(Resource):
             print str(ret)
             retdict = {"objectId":str(ret),'createdAt':timestr}
             self.after_save();
-            return json.dumps(retdict),201
+#            return json.dumps(retdict),201
+            return retdict
         except Exception,e:
             print e
         return "111"
@@ -226,7 +229,8 @@ class MResource(Resource):
                 ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{opword:request.json}) 
             print 'ret=',ret
             retdict = {"id":todo_id,"updatedAt":updatedAt}
-            return json.dumps(retdict)
+            return retdict
+#            return json.dumps(retdict)
         except Exception,e:
             print e
         return "111",201
