@@ -31,13 +31,10 @@ from pymongo import read_preferences
 def updateDocument(document,todo_id,json):
 
             client = MongoClient(util.getMydbip())
-            try:
-                del request.json["id"];
-            except Exception,e:
-                    print e
-                    return 
-            db = client.test_database
+
+            db = client.stylemaster
             ret = db[document].update({'_id': ObjectId(todo_id)},{"$set":json})
+            print 'ret=',ret
                  
                     
 def getNextSequence(documentname):
