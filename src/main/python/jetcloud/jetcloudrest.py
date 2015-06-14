@@ -19,9 +19,11 @@ from flask import make_response
 import time
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
-
+from pymongo import MongoClient
 import MongoResource
 import MongoAclResource
+from bson import ObjectId
+
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
@@ -55,6 +57,7 @@ class User(Document):
     mobilePhoneVerified=BooleanField(default=False)
     emailVerified=BooleanField(default=False)
     smscode = StringField(required=False)
+    phone = StringField(required=False)
     email = EmailField()
     MobilePhoneNumber =StringField()
     sessionToken=StringField(required=True)
@@ -144,10 +147,11 @@ def newOrderno():
             neworderno = MongoResource.newOrderno("number")
             return (jsonify({'orderno': neworderno}), 200)
 
-@app.route('/1.1/users/<path:oid>', methods=['get'])
+@app.route('/1.1/classes/_User/<path:oid>', methods=['get'])
 def get_user(oid):
      try:
             print 'get_user'
+
 
             user= User.objects(pk=oid).first()
             if user is None:
@@ -163,7 +167,51 @@ def get_user(oid):
 #            {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
-@app.route('/1.1/users/<path:oid>', methods=['put'])
+@app.route('/1.1/classes/_User', methods=['get'])
+def get_userbywhere():
+     try:
+            print 'get_user'
+
+            searchword = request.args.get('where', '')
+            print 'searchword=',searchword
+
+            client = MongoClient(util.getMydbip())
+            db = client.stylemaster
+            if searchword =='':
+
+                ret = db["user"].find()
+            else:
+                dict = json.loads(searchword)
+                if dict.has_key("objectId"):
+                    dict['_id']=ObjectId(dict['objectId'])
+                    del dict['objectId']
+                print 'dict=',dict
+                ret = db["user"].find(dict)
+            newsv = [];
+            print 'ret=',ret
+            for news in ret:
+                print 'news=',news
+                print 'news get id',news.get("id")
+                if news.get("id")==None:
+                    oid =  str(news["_id"])
+                    del news["_id"]
+#                    news['id']=oid
+                    news['objectId']=oid                    
+                newsv.append(news)
+            print 'newsv=',newsv
+            retdict={}
+            retdict['results']=newsv
+
+            return jsonify(retdict)
+#            return jsonify({'sessionToken':user.sessionToken,'username': user.username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} )
+
+     except Exception,e:
+            print e
+#    return (jsonify({'username': user.username}), 201,
+#            {'Location': url_for('get_user', id=user.id, _external=True)})
+     return  (jsonify({'status': "fail"}), 400)       
+
+@app.route('/1.1/classes/_User/<path:oid>', methods=['put'])
 def put_user(oid):
      try:
             print 'get_user'
@@ -174,8 +222,14 @@ def put_user(oid):
             print 'get user next'
             print 'user.id=',user.id
             print "put request=",request.json
+            dict = request.json
+            if dict.has_key("password"):
+                password = request.json["password"]
+                request.json["password"] =pwd_context.encrypt(password)
+                
             request.json['updatedAt']=time.strftime('%Y-%m-%d %H:%M:%S')
-            updateDocument()
+            
+            MongoResource.updateDocument("user",user.id,request.json)
             oid = str(user.id)
             return (jsonify({"updatedAt":user.updatedAt,"objectId":oid} ), 200)
 
@@ -184,7 +238,7 @@ def put_user(oid):
 #    return (jsonify({'username': user.username}), 201,
 #            {'Location': url_for('get_user', id=user.id, _external=True)})
 
-@app.route('/api/users', methods=['POST'])
+@app.route('/1.1/classes/_User', methods=['POST'])
 def new_user():
      try:
             print 'new_user'
@@ -211,7 +265,9 @@ def new_user():
         #    db.session.commit()
             print 'user.id=',user.id
             oid = str(user.id)
-            return (jsonify({ 'sessionToken':user.sessionToken,"createdAt":user.createdAt,"updatedAt":user.updatedAt}), 201,{'Location': url_for('/1.1/users', id=oid)})
+            return jsonify({ "objectId":oid,'sessionToken':user.sessionToken,"createdAt":user.createdAt,"updatedAt":user.updatedAt})
+        
+#            return (jsonify({ 'sessionToken':user.sessionToken,"createdAt":user.createdAt,"updatedAt":user.updatedAt}), 201,{'Location': url_for('/1.1/users', id=oid)})
      except Exception,e:
             print e
 #    return (jsonify({'username': user.username}), 201,
@@ -413,7 +469,47 @@ class MakeupList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="makeup"                     
-                    
+class Makeupartist(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="makeupartist"
+class MakeupartistList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="makeupartist"                     
+
+
+class Suitpromotion(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="suitpromotion"
+class SuitpromotionList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="suitpromotion" 
+
+class Role(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="role"
+class RoleList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="role" 
+        
+                                         
                     
 class Store(MongoResource.MResource):
     def __init__(self):
@@ -477,13 +573,20 @@ api.add_resource(ServiceList, '/1.1/classes/service')
 api.add_resource(Service, '/1.1/classes/service/<string:todo_id>')
 
 
+api.add_resource(RoleList, '/1.1/classes/role')
+api.add_resource(Role, '/1.1/classes/role/<string:todo_id>')
+
 api.add_resource(OrderList, '/1.1/classes/order')
 api.add_resource(Order, '/1.1/classes/order/<string:todo_id>')
 
 api.add_resource(MakeupList, '/1.1/classes/makeup')
 api.add_resource(Makeup, '/1.1/classes/makeup/<string:todo_id>')
 
+api.add_resource(MakeupartistList, '/1.1/classes/makeupartist')
+api.add_resource(Makeupartist, '/1.1/classes/makeupartist/<string:todo_id>')
 
+api.add_resource(SuitpromotionList, '/1.1/classes/suitpromotion')
+api.add_resource(Suitpromotion, '/1.1/classes/suitpromotion/<string:todo_id>')
 
 
 api.add_resource(StoreList, '/store')
