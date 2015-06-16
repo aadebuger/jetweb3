@@ -17,13 +17,13 @@ from passlib.apps import custom_app_context as pwd_context
 from functools import wraps
 from flask import make_response
 import time
-from itsdangerous import (TimedJSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
+
 from pymongo import MongoClient
 import MongoResource
 import MongoAclResource
 from bson import ObjectId
-
+#import jetuser
+from jetuser import *
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
@@ -44,74 +44,7 @@ def allow_cross_domain(fun):
 
   
 
-class User(Document):
-#    email = EmailField(required=True, unique=True)
-    password = StringField(required=True)
-    username = StringField(required=True)
-    createdAt = StringField(required=True)
-    updatedAt = StringField(required=True)
- 
-    
-    activated = BooleanField(default=False)
-    
-    mobilePhoneVerified=BooleanField(default=False)
-    emailVerified=BooleanField(default=False)
-    smscode = StringField(required=False)
-    phone = StringField(required=False)
-    email = EmailField()
-    MobilePhoneNumber =StringField()
-    sessionToken=StringField(required=True)
-    
-    def hash_password(self, password):
-        self.password = pwd_context.encrypt(password)
-        
-    def verify_password(self, password):
-        print 'self.password_hash',self.password
-        return pwd_context.verify(password, self.password)    
 
-    def build_smscode(self):
-        self.generate_auth_token()
-        
-        self.smscode="123456"
-        if len(self.username)>=6:
-            self.smscode = self.username[-6:]
-#        self.createdAt=time.strftime('%Y-%m-%dT%H:%M:%S')
-        self.updatedAt=time.strftime('%Y-%m-%dT%H:%M:%S')
-        self.save()    
-        
-         
-    def generate_auth_token(self, expiration=360000):
-        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
-        self.sessionToken=s.dumps(str(self.id))
-        print 'self sessionToken=',self.sessionToken
-#     return s.dumps({'id': self.id})
-
-    @staticmethod
-    def verify_auth_token(token):
-        
-        s = Serializer(app.config['SECRET_KEY'])
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            print 'none1'
-            return None    # valid token, but expired
-        except BadSignature:
-            print 'none2'
-            return None    # invalid token
-        print 'data=',data
-        user =User.objects(pk=data).first()
-        return user
-    @classmethod
-    def register(cls, email, password, activated=False, name=''):
-        user = cls()
-        user.email = email
-        user.name = name
-        user.activated = activated
-        user.set_password(password)
-        user.save()
-
-        return user
-    
 class HelloWorld(Resource):
     def get(self):
         return {'hello': 'world'}
@@ -258,7 +191,7 @@ def new_user():
             user.hash_password(password)
             user.createdAt=time.strftime('%Y-%m-%dT%H:%M:%S')
             user.updatedAt=time.strftime('%Y-%m-%dT%H:%M:%S')
-            user.generate_auth_token()
+            user.generate_auth_token(app.config['SECRET_KEY'])
             print 'sessionToken',user.sessionToken
             user.save()
         #    db.session.add(user)
@@ -302,7 +235,36 @@ def login():
             return (jsonify({'username': user.username}), 201)
      except Exception,e:
             print e
-
+@app.route('/1.1/login', methods=['post'])
+def loginbypost():
+     try:
+            print 'login post'
+            print 'json=',request.json
+            username = request.json.get('username')
+            password = request.json.get('password')
+            if username is None or password is None:
+                abort(400)    # missing arguments
+            print 'username=',username
+            print 'password=',password
+            user =User.objects.filter(username=username).first()
+            if  user is not None:
+                try:
+                    if user.verify_password(password):
+                        print 'verify_password ok'
+                        oid = str(user.id)
+                        return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
+                    else:
+                        return (jsonify({'status': "fail"}), 200)
+                except Exception,e:
+                    print e
+                    return (jsonify({'status': "fail"}), 400)
+            else:
+                return (jsonify({'status': "fail"}), 400)
+        #    db.session.add(user)
+        #    db.session.commit()
+            return (jsonify({'username': user.username}), 201)
+     except Exception,e:
+            print e
 @app.route('/1.1/requestMobilePhoneVerify', methods=['post'])
 def MobilePhonelogin():
      try:
@@ -369,7 +331,7 @@ def verifyMobilePhone(smscode):
 
             value = request.headers.get('X-AVOSCloud-Session-Token')
             print 'value=',value
-            user = User.verify_auth_token(value)
+            user = User.verify_auth_token(app.config['SECRET_KEY'],value)
             if user  is   None:
                  return (jsonify({'status': "fail"}), 400)
             if  user is not None:
@@ -389,7 +351,10 @@ def verifyMobilePhone(smscode):
      except Exception,e:
             print e
    
-
+@app.route('/1.1/batch/save', methods=['post'])
+def batch():
+         print 'batch request json',request.json
+         return (jsonify({'status': "fail"}), 400)
 class Barber(MongoResource.MResource):
     def __init__(self):
         '''
@@ -554,7 +519,20 @@ class users(MongoAclResource.MAclResource):
         Constructor
         '''
         self.documentname ="Users"
-        
+# for simple demo test
+#ObjectDemoTableRead
+class ObjectDemoTableRead(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="ObjectDemoTableRead"
+class ObjectDemoTableReadList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="ObjectDemoTableRead"     
 
 
 api.add_resource(BarberList, '/1.1/classes/barber')
@@ -595,6 +573,12 @@ api.add_resource(GameScoreList, '/1.1/classes/GameScore')
 api.add_resource(GameScore, '/1.1/classes/GameScore/<string:todo_id>')
 api.add_resource(feedbackList, '/1.1/classes/feedback')
 api.add_resource(feedback, '/1.1/classes/feedback/<string:todo_id>')
+
+
+api.add_resource(ObjectDemoTableReadList, '/1.1/classes/ObjectDemoTableRead')
+api.add_resource(ObjectDemoTableRead, '/1.1/classes/ObjectDemoTableRead/<string:todo_id>')
+
+
 api.add_resource(users, '/1.1/classes/users/<string:todo_id>')
 
 
