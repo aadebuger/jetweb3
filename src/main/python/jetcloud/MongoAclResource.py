@@ -6,7 +6,7 @@ Created on 2015
 import MongoResource
 
 from flask import Flask, request
-from flask.ext.restful import reqparse, abort, Api, Resource
+#from flask.ext.restful import reqparse, abort, Api, Resource
 from pymongo import MongoClient
 from pymongo import collection
 from pymongo import collection
@@ -16,14 +16,17 @@ from bson.objectid import ObjectId
 from MongoResource import MResource
 
 import util
+
+import json
 #from  jetcloudrest import User
 #import jetcloudrest
+from jetuser import *
 def getObjectid(request):
             value = request.headers.get('X-AVOSCloud-Session-Token')
             print 'value=',value
             if value is None:
                 return None
-            user = jetcloudrest.User.verify_auth_token(value)
+            user = User.verify_auth_token(value)
             return user
             
 class MAclResource(MResource):
@@ -63,6 +66,11 @@ class MAclResource(MResource):
             print "put request=",request.json
 #            newtodo_id = request.json['id'];
 #            print "newtodo_id=",newtodo_id;
+            user = getObjectid(request);
+            print 'user=',user
+            if  user is None:
+                return 'fail',400
+            
             client = MongoClient(util.getMydbip())
             try:
                 del request.json["id"];
@@ -74,9 +82,9 @@ class MAclResource(MResource):
             updatedAt= time.strftime('%Y-%m-%d %H:%M:%S')
             request.json['updatedAt']=time.strftime('%Y-%m-%d %H:%M:%S')
             if opword=='':
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$set":request.json})      
+                ret = db[self.documentname].update({'_id': ObjectId(todo_id),'ownid':user.id},{"$set":request.json})      
             else:
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{opword:request.json}) 
+                ret = db[self.documentname].update({'_id': ObjectId(todo_id),'ownid':user.id},{opword:request.json}) 
             print 'ret=',ret
             retdict = {"id":todo_id,"updatedAt":updatedAt}
             return json.dumps(retdict)
