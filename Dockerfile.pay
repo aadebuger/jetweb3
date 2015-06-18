@@ -1,0 +1,7 @@
+FROM    python:2
+run pip install pingpp
+run pip install flask
+Add src/main/python/pay.py /code
+EXPOSE 8888
+workdir /code
+CMD ["python", "pay.py"]
