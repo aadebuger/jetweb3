@@ -36,7 +36,7 @@ def do_charge():
         form['body'] = "Your Body"
         if form.has_key("objectId"):
             print 'form objectid = ',form['objectId']
-            form['order_no'] = orderno
+            form['order_no'] = form['objectId']
             processOrder(form['objectId'])
             del form['objectId']
     print form
