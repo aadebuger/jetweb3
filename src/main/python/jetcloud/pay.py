@@ -37,7 +37,7 @@ def do_charge():
         if form.has_key("objectId"):
             print 'form objectid = ',form['objectId']
             form['order_no'] = form['objectId']
-            processOrder(form['objectId'])
+            processOrder(form['objectId'],form)
             del form['objectId']
     print form
     pingpp.api_key = os.environ.get('PINGPP_APP_KEY',"123456")
