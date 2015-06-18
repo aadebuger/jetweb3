@@ -8,6 +8,14 @@ import string
 import os
 app = Flask(__name__)
 
+from MongoResource import *
+def processOrder( objectid,form):
+      print 'objectid',objectid
+      pushEvent("order", form)
+    
+@app.route('/webhook', methods=['post'])
+def do_webhook():
+    print 'webhook'
 
 @app.route('/pay', methods=['POST'])
 def do_charge():
@@ -23,8 +31,10 @@ def do_charge():
         form['client_ip'] = "127.0.0.1"
         form['subject'] = "Your Subject"
         form['body'] = "Your Body"
-        print 'form objectid = ',form['objectId']
-        del form['objectId']
+        if form.has_key("objectId"):
+            print 'form objectid = ',form['objectId']
+            processOrder(form['objectId'])
+            del form['objectId']
     print form
     pingpp.api_key = os.environ.get('PINGPP_APP_KEY',"123456")
     response_charge = pingpp.Charge.create(api_key=pingpp.api_key, **form)
