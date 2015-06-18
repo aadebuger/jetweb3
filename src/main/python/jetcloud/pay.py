@@ -7,6 +7,7 @@ import random
 import string
 import os
 import time
+import payevent
 app = Flask(__name__)
 
 from MongoResource import *
@@ -17,7 +18,7 @@ def processEvent(item):
             print 'item data order_no =',item['data']["object"]["order_no"]
             print 'item created=',item['created']
             print 'time created=',time.ctime(item['created'])
-            processOrder(item['data']["object"]["order_no"],item["type"])
+            payevent.processOrder(item['data']["object"]["order_no"],item["type"])
     except Exception,e:
         print 'e=',e
 def processOrder( objectid,form):
