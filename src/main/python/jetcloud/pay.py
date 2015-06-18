@@ -28,10 +28,11 @@ def processOrder( objectid,form):
 @app.route('/webhook', methods=['post'])
 def do_webhook():
     print 'data=',request.data
-    print 'json data2=',request.json
-    print 'item data=',request.json['data']
-    processEvent(request.json)
-    print 'json data data =',request.json['data']    
+    dict = request.get_json()
+    print 'json data4=',dict
+#    print 'item data=',request.json['data']
+    processEvent(dict)
+   
 
     return "ok"
     
