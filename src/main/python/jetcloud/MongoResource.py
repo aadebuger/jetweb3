@@ -28,6 +28,18 @@ from passlib.apps import custom_app_context as pwd_context
 from pymongo import read_preferences
 
 
+def pushEvent(document,objectjson):
+          client = MongoClient(util.getMydbip())
+
+          db = client.stylemaster
+          dict=[];
+          dict['objectname']=document
+          dict['object']= objectjson
+          ret = db["event"].insert(dict)  
+          print 'ret=',ret
+    
+    
+    
 def updateDocument(document,todo_id,json):
 
             client = MongoClient(util.getMydbip())
