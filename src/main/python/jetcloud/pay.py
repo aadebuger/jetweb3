@@ -12,9 +12,9 @@ app = Flask(__name__)
 from MongoResource import *
 def processEvent(item):
     try:
-            print 'item=',item
+            print 'item1=',item
             
-#            print 'item data=',item['data']
+            print 'item data =',item['data']
 #            print 'item type =',item["type"]
 #            print 'item data order_no =',item['data']["object"]["order_no"]
 #            print 'item created=',item['created']
@@ -29,7 +29,7 @@ def processOrder( objectid,form):
 def do_webhook():
 #    print 'data=',request.data
     dict1 = request.get_json()
-#    print 'json data4=',dict
+    print 'json data4=',dict1
 #    print 'item data=',request.json['data']
     if isinstance(dict1, dict):
         print 'is dict',
