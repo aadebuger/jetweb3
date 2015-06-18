@@ -72,6 +72,6 @@ def do_charge():
     return Response(json.dumps(response_charge), mimetype='application/json')
 
 if __name__ == '__main__':
-     leancloud.init("g0aeaj0c2j5iab43aj7e94ouwqsgvuw6x46986tcu7oaap4x","mkmi33s2skg7keg1s126xuzn2hoik464xsgjudq04d9bj927")
+    leancloud.init("g0aeaj0c2j5iab43aj7e94ouwqsgvuw6x46986tcu7oaap4x","mkmi33s2skg7keg1s126xuzn2hoik464xsgjudq04d9bj927")
 
     app.run(debug=True,port=8888,host="0.0.0.0")
