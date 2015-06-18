@@ -13,13 +13,10 @@ from MongoResource import *
 def processEvent(item):
     try:
             print 'item1=',item
-            print 'items1 keys',dict(item.lists())
-            dictitem = dict(item.lists())
-            print 'item data =',dictitem["data"]
-#            print 'item type =',item["type"]
-#            print 'item data order_no =',item['data']["object"]["order_no"]
-#            print 'item created=',item['created']
-#            print 'time created=',time.ctime(item['created'])
+            print 'item type =',item["type"]
+            print 'item data order_no =',item['data']["object"]["order_no"]
+            print 'item created=',item['created']
+            print 'time created=',time.ctime(item['created'])
     except Exception,e:
         print 'e=',e
 def processOrder( objectid,form):
@@ -40,7 +37,7 @@ def do_webhook():
         print 'is dict',
     else:
         print 'no dict',
-    processEvent(dict)
+    processEvent(newdict)
    
 
     return "ok"
