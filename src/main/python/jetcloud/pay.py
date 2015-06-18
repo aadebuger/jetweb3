@@ -11,13 +11,16 @@ app = Flask(__name__)
 
 from MongoResource import *
 def processEvent(item):
-    print 'item=',item
-    
-    print 'item data=',item['data']
-    print 'item type =',item["type"]
-    print 'item data order_no =',item['data']["object"]["order_no"]
-    print 'item created=',item['created']
-    print 'time created=',time.ctime(item['created'])
+    try:
+            print 'item=',item
+            
+            print 'item data=',item['data']
+            print 'item type =',item["type"]
+            print 'item data order_no =',item['data']["object"]["order_no"]
+            print 'item created=',item['created']
+            print 'time created=',time.ctime(item['created'])
+    except Exception,e:
+        print 'e=',e
 def processOrder( objectid,form):
       print 'objectid',objectid
       pushEvent("order", form)
