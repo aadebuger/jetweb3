@@ -31,6 +31,8 @@ def do_webhook():
 #    print 'data=',request.data
     newdict = json.loads(request.data)
     print 'newdict=',newdict
+    print 'newdict data=',newdict["data"]
+    
     dict1 = request.get_json()
     print 'json data4=',dict1
 #    print 'item data=',request.json['data']
