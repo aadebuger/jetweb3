@@ -15,7 +15,10 @@ def processOrder( objectid,form):
     
 @app.route('/webhook', methods=['post'])
 def do_webhook():
+    print 'data=',request.data
     print 'webhook'
+    return "ok"
+    
 
 @app.route('/pay', methods=['POST'])
 def do_charge():
@@ -33,6 +36,7 @@ def do_charge():
         form['body'] = "Your Body"
         if form.has_key("objectId"):
             print 'form objectid = ',form['objectId']
+            form['order_no'] = orderno
             processOrder(form['objectId'])
             del form['objectId']
     print form
