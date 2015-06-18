@@ -9,8 +9,9 @@ import os
 app = Flask(__name__)
 
 from MongoResource import *
-def processEvent(item):
-    print 'item=',item
+def processEvent(itemstr):
+    print 'item=',itemstr
+    item = json.loads(itemstr)
     print 'item data=',item['data']
     print 'item type =',item["type"]
     print 'item data order_no =',item['data']["object"]["order_no"]
