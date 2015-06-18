@@ -32,7 +32,7 @@ def pushEvent(document,objectjson):
           client = MongoClient(util.getMydbip())
 
           db = client.stylemaster
-          dict=[];
+          dict={};
           dict['objectname']=document
           dict['object']= objectjson
           ret = db["event"].insert(dict)  
