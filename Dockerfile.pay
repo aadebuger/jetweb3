@@ -4,4 +4,4 @@ run pip install flask
 Add src/main/python/jetcloud /code
 EXPOSE 8888
 workdir /code
-CMD ["python", "jetcoud/pay.py"]
+CMD ["python", "jetcloud/pay.py"]
