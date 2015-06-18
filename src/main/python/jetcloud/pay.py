@@ -29,9 +29,10 @@ def processOrder( objectid,form):
 def do_webhook():
     print 'data=',request.data
     print 'json data=',request.json
-    print 'json data data =',request.json['data']    
-    print 'webhook'
+
     processEvent(request.json)
+    print 'json data data =',request.json['data']    
+
     return "ok"
     
 
