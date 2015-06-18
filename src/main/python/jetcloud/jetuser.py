@@ -35,7 +35,7 @@ class User(Document):
         return pwd_context.verify(password, self.password)    
 
     def build_smscode(self):
-        self.generate_auth_token()
+#        self.generate_auth_token()
         
         self.smscode="123456"
         if len(self.username)>=6:
