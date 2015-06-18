@@ -13,8 +13,8 @@ from MongoResource import *
 def processEvent(item):
     try:
             print 'item1=',item
-            
-            print 'item data =',item['data']
+            print 'items1 keys',item.keys()
+            print 'item data =',item["data"]
 #            print 'item type =',item["type"]
 #            print 'item data order_no =',item['data']["object"]["order_no"]
 #            print 'item created=',item['created']
