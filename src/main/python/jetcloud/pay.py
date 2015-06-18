@@ -23,8 +23,8 @@ def do_charge():
         form['client_ip'] = "127.0.0.1"
         form['subject'] = "Your Subject"
         form['body'] = "Your Body"
-        print 'form objectid = ',form['objectid']
-        del form['objectid']
+        print 'form objectid = ',form['objectId']
+        del form['objectId']
     print form
     pingpp.api_key = os.environ.get('PINGPP_APP_KEY',"123456")
     response_charge = pingpp.Charge.create(api_key=pingpp.api_key, **form)
