@@ -1,9 +1,10 @@
-FROM    python:2
-run pip install pingpp
-run pip install flask
-run pip install pymongo
-run pip install mongoengine
-run pip install flask_restful
+#FROM    python:2
+FROM    aadebuger/pythonflask
+#run pip install pingpp
+#run pip install flask
+#run pip install pymongo
+#run pip install mongoengine
+#run pip install flask_restful
 Add src/main/python/ /code
 EXPOSE 8888
 workdir /code
