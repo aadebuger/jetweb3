@@ -24,6 +24,7 @@ def processOrder( objectid,form):
 @app.route('/webhook', methods=['post'])
 def do_webhook():
     print 'data=',request.data
+    print 'json data=',request.json
     print 'webhook'
     processEvent(request.data)
     return "ok"
