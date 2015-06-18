@@ -14,7 +14,7 @@ def processEvent(item):
     try:
             print 'item=',item
             
-            print 'item data=',item['data']
+#            print 'item data=',item['data']
 #            print 'item type =',item["type"]
 #            print 'item data order_no =',item['data']["object"]["order_no"]
 #            print 'item created=',item['created']
@@ -28,7 +28,7 @@ def processOrder( objectid,form):
 @app.route('/webhook', methods=['post'])
 def do_webhook():
     print 'data=',request.data
-    print 'json data=',request.json
+    print 'json data1=',request.json
 
     processEvent(request.json)
     print 'json data data =',request.json['data']    
