@@ -7,7 +7,8 @@ import random
 import string
 import os
 import time
-from jetcloud import payevent
+import payevent
+
 app = Flask(__name__)
 
 from MongoResource import *
