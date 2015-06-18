@@ -6,12 +6,13 @@ import json
 import random
 import string
 import os
+import time
 app = Flask(__name__)
 
 from MongoResource import *
-def processEvent(itemstr):
-    print 'item=',itemstr
-    item = json.loads(itemstr)
+def processEvent(item):
+    print 'item=',item
+    
     print 'item data=',item['data']
     print 'item type =',item["type"]
     print 'item data order_no =',item['data']["object"]["order_no"]
@@ -26,7 +27,7 @@ def do_webhook():
     print 'data=',request.data
     print 'json data=',request.json
     print 'webhook'
-    processEvent(request.data)
+    processEvent(request.json)
     return "ok"
     
 
