@@ -6,6 +6,7 @@ FROM    aadebuger/pythonflask
 #run pip install mongoengine
 #run pip install flask_restful
 run pip install passlib
+run pip install leancloud-sdk
 Add src/main/python/ /code
 EXPOSE 8888
 workdir /code
