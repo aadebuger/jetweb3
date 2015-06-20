@@ -24,6 +24,7 @@ import MongoAclResource
 from bson import ObjectId
 #import jetuser
 from jetuser import *
+from  HttpResource import *
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
