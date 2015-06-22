@@ -404,6 +404,14 @@ def orderpost():
             return ret
      except Exception,e:
             print e          
+@app.route('/1.1/classes/shop', methods=['post'])
+def shoppost():
+     try:
+            ret = parseRequest("shop",request)
+            return ret
+     except Exception,e:
+            print e   
+            
 class Barber(MongoResource.MResource):
     def __init__(self):
         '''
