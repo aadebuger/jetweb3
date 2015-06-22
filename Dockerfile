@@ -7,6 +7,7 @@ Add src/main/python /code
 #run pip install flask_restful
 #run pip install passlib
 run pip install qiniu
+run pip install passlib
 EXPOSE 5000
 workdir /code
 CMD ["python", "jetcloud/jetcloudrest.py"]
