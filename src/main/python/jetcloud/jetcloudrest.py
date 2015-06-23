@@ -24,7 +24,6 @@ import MongoAclResource
 from bson import ObjectId
 #import jetuser
 from jetuser import *
-from  HttpResource import *
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
@@ -421,7 +420,20 @@ class ServiceList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="service"   
-        
+
+class Review(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="review"
+class ReviewList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="review" 
+                
         
 class Makeup(MongoResource.MResource):
     def __init__(self):
@@ -461,7 +473,35 @@ class SuitpromotionList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="suitpromotion" 
+        
+class Appointment(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="appointment"
+class AppointmentList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="appointment" 
 
+
+class Mycollection(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="collection"
+class MycollectionList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="collection" 
+        
+        
 class Role(MongoResource.MResource):
     def __init__(self):
         '''
@@ -552,6 +592,15 @@ api.add_resource(ServiceList, '/1.1/classes/service')
 api.add_resource(Service, '/1.1/classes/service/<string:todo_id>')
 
 
+api.add_resource(AppointmentList, '/1.1/classes/appointment')
+api.add_resource(Appointment, '/1.1/classes/appointment/<string:todo_id>')
+
+
+api.add_resource(MycollectionList, '/1.1/classes/mycollection')
+api.add_resource(Mycollection, '/1.1/classes/mycollection/<string:todo_id>')
+
+
+
 api.add_resource(RoleList, '/1.1/classes/role')
 api.add_resource(Role, '/1.1/classes/role/<string:todo_id>')
 
@@ -566,6 +615,12 @@ api.add_resource(Makeupartist, '/1.1/classes/makeupartist/<string:todo_id>')
 
 api.add_resource(SuitpromotionList, '/1.1/classes/suitpromotion')
 api.add_resource(Suitpromotion, '/1.1/classes/suitpromotion/<string:todo_id>')
+
+
+api.add_resource(ReviewList, '/1.1/classes/review')
+api.add_resource(Review, '/1.1/classes/review/<string:todo_id>')
+
+
 
 
 api.add_resource(StoreList, '/store')
