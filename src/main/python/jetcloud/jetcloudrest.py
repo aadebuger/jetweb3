@@ -22,6 +22,9 @@ from pymongo import MongoClient
 import MongoResource
 import MongoAclResource
 from bson import ObjectId
+import base64
+import cStringIO
+
 #import jetuser
 from jetuser import *
 app = Flask(__name__)
@@ -50,7 +53,7 @@ class HelloWorld(Resource):
         return {'hello': 'world'}
 
 api.add_resource(HelloWorld, '/')
-@app.route('/1.1/files/<path:filename>', methods=['POST'])
+@app.route('/1.1/filesdirect/<path:filename>', methods=['POST'])
 def save_upload(filename):
 
 #    file = request.files['file']
@@ -75,6 +78,38 @@ def save_upload(filename):
 #        abort(404, message="mimetype error")
 
 
+@app.route('/1.1/files/<path:filename>', methods=['POST'])
+def save_uploadform(filename):
+
+#    file = request.files['file']
+#    print 'file=',file
+
+#    if file and allowed_file(file.filename):
+#        print 'data len',len(request.data)
+        
+#        mediaid = MongoResource.newUpload("media");                
+#        filename = secure_filename(file.filename)
+        print 'filename=',filename
+#        mongo.save_file("%s.jpg"%(mediaid), request.files['file'])
+        
+        form = request.get_json() 
+        print 'form=',form
+        print '_ContentType',form['_ContentType']
+        print 'mime_type',form['mime_type']
+        print 'metaData',form['metaData']
+        
+#        abort(404, message="mimetype error") 
+        pic = cStringIO.StringIO()
+        image_string = cStringIO.StringIO(base64.b64decode(form['base64']))
+        cloudfile.uploadfile(filename,image_string )
+        url="http://7xjdvj.com1.z0.glb.clouddn.com/%s"%(filename)
+        name=filename
+        retdict= MongoResource.newBucketUpload("files", len(request.data), "jetcloud",url, name)
+
+        print 'retdict=',retdict    
+        return json.dumps(retdict);
+        
+#        abort(404, message="mimetype error")
 @app.route('/1.1/neworderno', methods=['get'])
 def newOrderno():
             neworderno = MongoResource.newOrderno("number")
