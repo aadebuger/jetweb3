@@ -52,6 +52,7 @@ def do_charge():
     form = request.get_json()
     print 'data=',request.data
     print form
+    orderoid=''
     orderno = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     if isinstance(form, dict):
         form['order_no'] = orderno
@@ -62,6 +63,7 @@ def do_charge():
         form['body'] = "Your Body"
         if form.has_key("objectId"):
             print 'form objectid = ',form['objectId']
+            orderoid= form['objectId']
             form['order_no'] = form['objectId']
             processOrder(form['objectId'],form)
             del form['objectId']
@@ -69,6 +71,8 @@ def do_charge():
     pingpp.api_key = os.environ.get('PINGPP_APP_KEY',"123456")
     response_charge = pingpp.Charge.create(api_key=pingpp.api_key, **form)
     print "Response_Charge: " + str(response_charge)
+    payevent.updateOrder(orderoid,orderoid,str(response_charge))
+    
     return Response(json.dumps(response_charge), mimetype='application/json')
 
 if __name__ == '__main__':
