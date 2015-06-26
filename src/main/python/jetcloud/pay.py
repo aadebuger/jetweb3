@@ -75,7 +75,7 @@ def do_charge():
     pingpp.api_key = os.environ.get('PINGPP_APP_KEY',"123456")
     response_charge = pingpp.Charge.create(api_key=pingpp.api_key, **form)
     print "Response_Charge: " + str(response_charge)
-    payevent.updateOrder(orderoid,orderno,str(response_charge))
+    payevent.updateOrder(orderoid,str(orderno),str(response_charge))
     
     return Response(json.dumps(response_charge), mimetype='application/json')
 
