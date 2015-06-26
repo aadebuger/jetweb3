@@ -57,6 +57,7 @@ def do_charge():
 #    orderno = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     uniqueid= util.__uniqueid__().next
     orderno =uniqueid()
+    print 'orderno',orderno
     if isinstance(form, dict):
         form['order_no'] = orderno
         form['app'] = dict(id=os.environ.get('PINGPP_APP_ID',"123456"))
@@ -74,7 +75,7 @@ def do_charge():
     pingpp.api_key = os.environ.get('PINGPP_APP_KEY',"123456")
     response_charge = pingpp.Charge.create(api_key=pingpp.api_key, **form)
     print "Response_Charge: " + str(response_charge)
-    payevent.updateOrder(orderoid,orderoid,str(response_charge))
+    payevent.updateOrder(orderoid,orderno,str(response_charge))
     
     return Response(json.dumps(response_charge), mimetype='application/json')
 
