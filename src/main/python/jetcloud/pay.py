@@ -12,6 +12,7 @@ import leancloud
 app = Flask(__name__)
 
 from MongoResource import *
+
 def processEvent(item):
     try:
             print 'item1=',item
@@ -53,7 +54,9 @@ def do_charge():
     print 'data=',request.data
     print form
     orderoid=''
-    orderno = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+#    orderno = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    uniqueid= util.__uniqueid__().next
+    orderno =uniqueid()
     if isinstance(form, dict):
         form['order_no'] = orderno
         form['app'] = dict(id=os.environ.get('PINGPP_APP_ID',"123456"))
