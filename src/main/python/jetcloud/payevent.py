@@ -25,7 +25,18 @@ def processOrder(orderno,ordertype):
             order.save()
     else:
         print 'order is none'
-        
+ 
+def updateOrder(oid,orderid,charge):
+    orderc = Object.extend('order')
+    query = Query(orderc)
+    order = query.get(oid)
+    print 'order=',order
+    if order is not None:
+            order.set("orderid",orderid)
+            order.set("charge",charge)
+            order.save()
+    else:
+        print 'order is none'        
     
 def processEvent(item):
     print 'item=',item
