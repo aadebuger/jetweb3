@@ -7,6 +7,7 @@ FROM    aadebuger/pythonflask
 #run pip install flask_restful
 run pip install passlib
 run pip install leancloud-sdk
+run pip install  Celery
 Add src/main/python/ /code
 EXPOSE 8888
 workdir /code
