@@ -10,10 +10,12 @@ import os
 import time
 import payevent
 import leancloud
+from celery import Celery
 app = Flask(__name__)
 
 from MongoResource import *
 
+capp = Celery('smstasks', broker=os.environ.get('CELERY_BROKER_URL',"amqp://guest@localhost//"))
 def processEvent(item):
     try:
             print 'item1=',item
@@ -22,6 +24,7 @@ def processEvent(item):
             print 'item created=',item['created']
             print 'time created=',time.ctime(item['created'])
             payevent.processOrder(item['data']["object"]["order_no"],item["type"])
+            
     except Exception,e:
         print 'e=',e
 def processOrder( objectid,form):
@@ -82,5 +85,6 @@ def do_charge():
 
 if __name__ == '__main__':
     leancloud.init("g0aeaj0c2j5iab43aj7e94ouwqsgvuw6x46986tcu7oaap4x","mkmi33s2skg7keg1s126xuzn2hoik464xsgjudq04d9bj927")
-
+    capp.send_task('smscloud.smstasks.pushAll',args=["030701e583f","启动pay"],kwargs={})
+    
     app.run(debug=True,port=8888,host="0.0.0.0")
