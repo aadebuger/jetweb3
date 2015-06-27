@@ -1,4 +1,5 @@
-__author__ = 'Lekton'
+# -*- coding: utf-8 -*-
+__author__ = 'zhv'
 
 import pingpp
 from flask import Flask,request,Response
@@ -63,7 +64,7 @@ def do_charge():
         form['app'] = dict(id=os.environ.get('PINGPP_APP_ID',"123456"))
         form['currency'] = "cny"
         form['client_ip'] = "127.0.0.1"
-        form['subject'] = "Your Subject"
+        form['subject'] = "星范服务"
         form['body'] = "Your Body"
         if form.has_key("objectId"):
             print 'form objectid = ',form['objectId']
