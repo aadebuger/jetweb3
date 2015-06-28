@@ -28,6 +28,9 @@ from passlib.apps import custom_app_context as pwd_context
 from pymongo import read_preferences
 
 
+
+def getIso8601():
+   return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+"Z"
 def pushEvent(document,objectjson):
           client = MongoClient(util.getMydbip())
 
@@ -136,6 +139,11 @@ class MResourceList(Resource):
                     print e
         else:
              dict = json.loads(searchword)
+             if dict.has_key("objectId"):
+                    oid = dict["objectId"]
+                    dict['_id']=ObjectId(oid)
+                    del dict["objectId"]
+                    
              ret = db[self.documentname].find(dict)
         newsv = [];
         for news in ret:
@@ -144,7 +152,8 @@ class MResourceList(Resource):
             if news.get("id")==None:
                 oid =  str(news["_id"])
                 del news["_id"]
-                news['id']=oid
+#                news['id']=oid
+                news['objectId']=oid
             newsv.append(news)
         print 'newsv=',newsv
         retdict={}
@@ -163,6 +172,7 @@ class MResourceList(Resource):
             client = MongoClient(util.getMydbip())
             db = client.test_database
             timestr= time.strftime('%Y-%m-%d %H:%M:%S')
+            timestr =getIso8601()
             request.json['createdAt']=timestr
             ret = db[self.documentname].insert(request.json)      
             print str(ret)
@@ -213,13 +223,13 @@ class MResource(Resource):
         db = client.test_database
         ret  = db[self.documentname].remove({'_id': ObjectId(todo_id)})   
         print 'ret=',ret     
-        return '', 204
+        return {"code":200};
 
     def put(self, todo_id):
         print "put=",request
         print 'todo_id',todo_id
         try:
-            print "put request=",request.json
+ 
 #            newtodo_id = request.json['id'];
 #            print "newtodo_id=",newtodo_id;
             client = MongoClient(util.getMydbip())
@@ -231,7 +241,8 @@ class MResource(Resource):
             opword = request.args.get('op', '')
             print 'opword=',opword;
             updatedAt= time.strftime('%Y-%m-%d %H:%M:%S')
-            request.json['updatedAt']=time.strftime('%Y-%m-%d %H:%M:%S')
+            updatedAt =getIso8601()
+            request.json['updatedAt']=updatedAt
             if opword=='':
                 ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$set":request.json})      
             else:
