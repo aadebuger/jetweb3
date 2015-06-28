@@ -179,6 +179,7 @@ def put_user(oid):
 def new_user():
      try:
             print 'new_user'
+            print 'json=',request.json
             username = request.json.get('username')
             password = request.json.get('password')
             if username is None or password is None:
@@ -193,8 +194,13 @@ def new_user():
             print 'new user next'
             user = User(username=username)
             user.hash_password(password)
-            user.createdAt=time.strftime('%Y-%m-%dT%H:%M:%S')
-            user.updatedAt=time.strftime('%Y-%m-%dT%H:%M:%S')
+#            user.createdAt=time.strftime('%Y-%m-%dT%H:%M:%S')
+#            user.updatedAt=time.strftime('%Y-%m-%dT%H:%M:%S')
+            user.createdAt=MongoResource.getIso8601()
+            user.updatedAt=MongoResource.getIso8601()   
+            if  request.json.has_key("oshopid"):
+                print 'oshop exists'
+                user.oshopid= request.json.get('oshopid')      
             user.generate_auth_token(app.config['SECRET_KEY'])
             print 'sessionToken',user.sessionToken
             user.save()
@@ -244,8 +250,12 @@ def loginbypost():
      try:
             print 'login post'
             print 'json=',request.json
-            username = request.json.get('username')
-            password = request.json.get('password')
+            paramdict = request.json
+            if paramdict is None:
+                        paramdict = json.loads(request.data)
+                        
+            username = paramdict.get('username')
+            password = paramdict.get('password')
             if username is None or password is None:
                 abort(400)    # missing arguments
             print 'username=',username
@@ -256,14 +266,18 @@ def loginbypost():
                     if user.verify_password(password):
                         print 'verify_password ok'
                         oid = str(user.id)
-                        return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
+                        if user.oshopid is not None:
+                            return (jsonify({'oshopid':user.oshopid,'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
+                                
+                        else:
+                            return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
-                        return (jsonify({'status': "fail"}), 200)
+                        return (jsonify({"code":210,"error":"The username and password mismatch."}), 200)
                 except Exception,e:
                     print e
-                    return (jsonify({'status': "fail"}), 400)
+                    return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
             else:
-                return (jsonify({'status': "fail"}), 400)
+                return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
         #    db.session.add(user)
         #    db.session.commit()
             return (jsonify({'username': user.username}), 201)
@@ -372,6 +386,15 @@ def barberpost():
             return ret
      except Exception,e:
             print e
+@app.route('/1.1/classes/barber/<string:todo_id>', methods=['post'])
+def barberpostbyid(todo_id):
+     try:
+            print 'todo_id',todo_id
+            ret = parseRequestbyid("barber",request,todo_id)
+            return ret
+     except Exception,e:
+            print e   
+
 @app.route('/1.1/classes/service', methods=['post'])
 def servicepost():
      try:
@@ -383,6 +406,14 @@ def servicepost():
             return ret
      except Exception,e:
             print e
+@app.route('/1.1/classes/service/<string:todo_id>', methods=['post'])
+def servicepostbyid(todo_id):
+     try:
+            print 'todo_id',todo_id
+            ret = parseRequestbyid("service",request,todo_id)
+            return ret
+     except Exception,e:
+            print e  
 @app.route('/1.1/classes/appointment', methods=['post'])
 def appointmentpost():
      try:
@@ -390,6 +421,14 @@ def appointmentpost():
             return ret
      except Exception,e:
             print e
+@app.route('/1.1/classes/appointment/<string:todo_id>', methods=['post'])
+def appointmentpostbyid(todo_id):
+     try:
+            print 'todo_id',todo_id
+            ret = parseRequestbyid("appointment",request,todo_id)
+            return ret
+     except Exception,e:
+            print e  
 @app.route('/1.1/classes/suitpromotion', methods=['post'])
 def suitpromotionpost():
      try:
@@ -397,6 +436,14 @@ def suitpromotionpost():
             return ret
      except Exception,e:
             print e
+@app.route('/1.1/classes/suitpromotion/<string:todo_id>', methods=['post'])
+def suitpromotionpostbyid(todo_id):
+     try:
+            print 'todo_id',todo_id
+            ret = parseRequestbyid("suitpromotionpost",request,todo_id)
+            return ret
+     except Exception,e:
+            print e  
 @app.route('/1.1/classes/order', methods=['post'])
 def orderpost():
      try:
@@ -411,7 +458,17 @@ def shoppost():
             return ret
      except Exception,e:
             print e   
-            
+@app.route('/1.1/classes/shop/<string:todo_id>', methods=['post'])
+def shoppostbyid(todo_id):
+     try:
+            print 'todo_id',todo_id
+            ret = parseRequestbyid("shop",request,todo_id)
+            return ret
+     except Exception,e:
+            print e   
+
+    
+    
 class Barber(MongoResource.MResource):
     def __init__(self):
         '''
