@@ -72,8 +72,28 @@ def getResouce(documentname,request):
         return retstr 
 #        newdict = json.loads(retstr)  
 #        return retdict
-def postResource(request):
-        print 'post'
+def postResource(documentname, request):
+        print "post=",request
+#      if not self.before_save():
+#             return "111",404
+        
+        try:
+
+            client = MongoClient(util.getMydbip())
+            db = client.test_database
+
+            timestr =MongoResource.getIso8601()
+            request['createdAt']=timestr
+            ret = db[documentname].insert(request)      
+            print str(ret)
+            retdict = {"objectId":str(ret),'createdAt':timestr}
+#            self.after_save();
+#            return json.dumps(retdict),201
+            retstr= json.dumps(retdict,default=json_util.default) 
+            return retstr 
+        except Exception,e:
+            print e
+        return "111"
 
 
 def putResource(documentname,request,todo_id):
@@ -112,11 +132,13 @@ def parseRequest(documentname, request):
         print request.data
         newdict = json.loads(request.data)
         print 'newdict=',newdict
-        method = newdict['_method']
-        print 'method',method
-
+        try:
+            method = newdict['_method']
+            print 'method',method
+        except Exception,e:
+            method="POST"
         httpResource = { 'GET': lambda: getResouce(documentname,newdict),
-            'POST': lambda: postResource(newdict),
+            'POST': lambda: postResource(documentname,newdict),
           } 
         return httpResource[method]()
 def parseRequestbyid(documentname, request,oid):
