@@ -275,8 +275,12 @@ def loginbypost():
      try:
             print 'login post'
             print 'json=',request.json
-            username = request.json.get('username')
-            password = request.json.get('password')
+            paramdict = request.json
+            if paramdict is None:
+                        paramdict = json.loads(request.data)
+                        
+            username = paramdict.get('username')
+            password = paramdict.get('password')
             if username is None or password is None:
                 abort(400)    # missing arguments
             print 'username=',username
@@ -289,12 +293,12 @@ def loginbypost():
                         oid = str(user.id)
                         return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
-                        return (jsonify({'status': "fail"}), 200)
+                        return (jsonify({"code":210,"error":"The username and password mismatch."}), 200)
                 except Exception,e:
                     print e
-                    return (jsonify({'status': "fail"}), 400)
+                    return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
             else:
-                return (jsonify({'status': "fail"}), 400)
+                return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
         #    db.session.add(user)
         #    db.session.commit()
             return (jsonify({'username': user.username}), 201)
