@@ -26,7 +26,8 @@ class User(Document):
     email = EmailField()
     MobilePhoneNumber =StringField()
     sessionToken=StringField(required=True)
-    
+    obarberid =StringField()
+    oshopid  = StringField() 
     def hash_password(self, password):
         self.password = pwd_context.encrypt(password)
         
