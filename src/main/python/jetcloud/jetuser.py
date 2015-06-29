@@ -25,7 +25,7 @@ class User(Document):
     phone = StringField(required=False)
     email = EmailField()
     MobilePhoneNumber =StringField()
-    sessionToken=StringField(required=True)
+    sessionToken=StringField(required=False)
     obarberid =StringField()
     oshopid  = StringField() 
     def hash_password(self, password):
@@ -48,6 +48,7 @@ class User(Document):
          
     def generate_auth_token(self, secret_key,expiration=360000):
         s = Serializer(secret_key, expires_in=expiration)
+        print 'self.id =',self.id
         self.sessionToken=s.dumps(str(self.id))
         print 'self sessionToken=',self.sessionToken
 #     return s.dumps({'id': self.id})
