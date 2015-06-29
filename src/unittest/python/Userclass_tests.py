@@ -30,6 +30,7 @@ class Test(unittest.TestCase):
             print "Verify_auth_token"
             user = jetcloudrest.User.verify_auth_token(jetcloudrest.app.config['SECRET_KEY'],"eyJhbGciOiJIUzI1NiIsImV4cCI6MTQzMzkyNTM5OSwiaWF0IjoxNDMzOTI0Nzk5fQ.IjU1NzdjNjk5NDIxYWE5MTIwMjBkZTlhZCI.g7QDJfgUTT_hLVrtXba8j2GCj_uJ962UithrSC7bKg4")       
             print 'user=',user
+    def test
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
