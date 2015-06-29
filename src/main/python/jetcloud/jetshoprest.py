@@ -106,9 +106,9 @@ def save_uploadform(filename):
 #        abort(404, message="mimetype error") 
         uniqueid= util.__uniqueid__().next
         if form['mime_type']=='image/jpeg':
-                hashfilename = uniqueid+".jpg"
+                hashfilename = str(uniqueid())+".jpeg"
         else:
-                hashfilename = uniqueid+".png"
+                hashfilename = str(uniqueid())+".png"
         pic = cStringIO.StringIO()
         image_string = cStringIO.StringIO(base64.b64decode(form['base64']))
         cloudfile.uploadfile(hashfilename,image_string )
