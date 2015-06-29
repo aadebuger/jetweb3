@@ -104,10 +104,15 @@ def save_uploadform(filename):
         print 'metaData',form['metaData']
         
 #        abort(404, message="mimetype error") 
+        uniqueid= util.__uniqueid__().next
+        if form['mime_type']=='image/jpeg':
+                hashfilename = uniqueid+".jpg"
+        else:
+                hashfilename = uniqueid+".png"
         pic = cStringIO.StringIO()
         image_string = cStringIO.StringIO(base64.b64decode(form['base64']))
-        cloudfile.uploadfile(filename,image_string )
-        url="http://7xjdvj.com1.z0.glb.clouddn.com/%s"%(filename)
+        cloudfile.uploadfile(hashfilename,image_string )
+        url="http://7xjdvj.com1.z0.glb.clouddn.com/%s"%(hashfilename)
         name=filename
         retdict= MongoResource.newBucketUpload("files", len(request.data), "jetcloud",url, name)
 
@@ -237,12 +242,13 @@ def new_user():
             if  request.json.has_key("oshopid"):
                 print 'oshop exists'
                 user.oshopid= request.json.get('oshopid')      
-            user.generate_auth_token(app.config['SECRET_KEY'])
-            print 'sessionToken',user.sessionToken
             user.save()
         #    db.session.add(user)
         #    db.session.commit()
             print 'user.id=',user.id
+            user.generate_auth_token(app.config['SECRET_KEY'])
+            print 'sessionToken',user.sessionToken
+            user.save()
             oid = str(user.id)
             return jsonify({ "objectId":oid,'sessionToken':user.sessionToken,"createdAt":user.createdAt,"updatedAt":user.updatedAt})
         
@@ -534,10 +540,8 @@ def updatePassword(todo_id):
             print 'new_password',new_password
             _SessionToken= paramdict.get('_SessionToken')
             print '_SessionToken=',_SessionToken
-            testToken="eyJhbGciOiJIUzI1NiIsImV4cCI6MTQzNTgzOTI5MywiaWF0IjoxNDM1NDc5MjkzfQ.Ik5vbmUi.ItL19ZHc6JH3ZV_XlN-HEwCTPV67SFuJ5rLykvoz9Zo"
-            
-#            user = User.verify_auth_token(app.config['SECRET_KEY'],testToken)
-#            print 'session user=',user
+            user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
+            print 'session user=',user
             user= User.objects(pk=todo_id).first()
             if user is None:
                return  (jsonify({'status': "fail"}), 400)   # existing user
