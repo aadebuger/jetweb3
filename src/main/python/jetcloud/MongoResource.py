@@ -51,7 +51,66 @@ def updateDocument(document,todo_id,json):
             ret = db[document].update({'_id': ObjectId(todo_id)},{"$set":json})
             print 'ret=',ret
                  
-                    
+
+def getDocument(documentname,todo_id):
+
+            client = MongoClient(util.getMydbip())
+
+            db = client.stylemaster
+            document = db[documentname].find_one({'_id': ObjectId(todo_id)})
+            print 'document=',document
+            if document==None:
+                 return""    
+#        return json.dumps(document,default=json_util.default)  
+            oid =  str(document["_id"])
+            del document["_id"]
+            del document["password"]
+            document['id']=oid
+            document['objectId']=oid
+            
+            retstr = json.dumps(document,default=json_util.default)      
+            print 'retstr=',retstr  
+            return retstr     
+
+
+def searchDocument(documentname,query,offset, limit,order):
+        print 'search'
+        
+        client = MongoClient(util.getMydbip())
+        db = client.test_database
+
+        
+        
+        
+        print 'offset=',offset
+        print 'limit=',limit
+        print 'order=',order
+        
+        
+#        ret = db.news.find_one()
+
+        text_results = db.command('text', documentname, search=query, filter={'related':True}, limit=SEARCH_LIMIT)
+        newsv=[]
+        for news in text_results:
+            print 'news=',news
+            print 'news get id',news.get("id")
+            if news.get("id")==None:
+                oid =  str(news["_id"])
+                del news["_id"]
+#                news['id']=oid
+                news['objectId']=oid
+            newsv.append(news)
+        print 'newsv=',newsv
+        retdict={}
+        retdict['results']=newsv
+#        return json.dumps(newsv,default=json_util.default)        
+        retstr= json.dumps(newsv,default=json_util.default)  
+        newdict = json.loads(retstr)  
+        return retdict
+    
+    
+    
+                        
 def getNextSequence(documentname):
         print 'getNextSequence'
         client = MongoClient(util.getMydbip())
@@ -113,11 +172,14 @@ class MResourceList(Resource):
         searchword = request.args.get('where', '')
         offset = int(request.args.get('offset', '0'))
         limit = int(request.args.get('limit', '0'))
+        order= request.args.get('order', '')
+        
         
         
         print 'searchword=',searchword
         print 'offset=',offset
         print 'limit=',limit
+        print 'order=',order
         
         
 #        ret = db.news.find_one()
@@ -143,19 +205,37 @@ class MResourceList(Resource):
                     oid = dict["objectId"]
                     dict['_id']=ObjectId(oid)
                     del dict["objectId"]
-                    
+             if dict.has_key("location"):
+                     print 'location=',dict['location']
+                     mylocation = dict['location']
+                     if mylocation.has_key('$nearSphere'):
+                             mylocation['$near'] = mylocation['$nearSphere']
+                             del mylocation['$near']["__type"]
+#                            mylocation['$near']={'latitude': 39.9087144,  ,'longitude': 116.397389}
+                            
+                             del mylocation['$nearSphere']
+#                    del dict['location']
+             print 'new dict=',dict
              ret = db[self.documentname].find(dict)
+             orderv = order.split(",")
+             print 'orderv=',orderv
+             if order is not "":
+                 print 'order sort'
+                 for sortvalue in orderv:
+                
+                    if sortvalue.startswith("-"):
+                         ret.sort(sortvalue[1],-1)
+                    else:
+                        ret.sort(sortvalue)
         newsv = [];
         for news in ret:
-            print 'news=',news
-            print 'news get id',news.get("id")
             if news.get("id")==None:
                 oid =  str(news["_id"])
                 del news["_id"]
 #                news['id']=oid
                 news['objectId']=oid
             newsv.append(news)
-        print 'newsv=',newsv
+#        print 'newsv=',newsv
         retdict={}
         retdict['results']=newsv
 #        return json.dumps(newsv,default=json_util.default)        
@@ -174,6 +254,11 @@ class MResourceList(Resource):
             timestr= time.strftime('%Y-%m-%d %H:%M:%S')
             timestr =getIso8601()
             request.json['createdAt']=timestr
+            if request.json.has_key("location"):
+                    print 'find location'
+                    location = request.json['location']
+                    del location["__type"]
+                    
             ret = db[self.documentname].insert(request.json)      
             print str(ret)
             retdict = {"objectId":str(ret),'createdAt':timestr}
