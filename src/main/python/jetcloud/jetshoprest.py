@@ -431,11 +431,12 @@ def barberpost():
 @app.route('/1.1/classes/barber/<string:todo_id>', methods=['post'])
 def barberpostbyid(todo_id):
      try:
-            print 'todo_id',todo_id
+            
+            print 'barberpostbyid todo_id',todo_id
             ret = parseRequestbyid("barber",request,todo_id)
             return ret
      except Exception,e:
-            print e   
+            print "e=",e   
 
 @app.route('/1.1/classes/service', methods=['post'])
 def servicepost():
