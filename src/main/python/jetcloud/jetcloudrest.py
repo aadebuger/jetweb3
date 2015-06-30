@@ -24,7 +24,7 @@ import MongoAclResource
 from bson import ObjectId
 import base64
 import cStringIO
-
+from bson import json_util
 #import jetuser
 from jetuser import *
 app = Flask(__name__)
@@ -135,6 +135,40 @@ def get_user(oid):
 #            {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
+
+@app.route('/1.1/users/<path:oid>', methods=['get'])
+def getmobileuser(oid):
+     try:
+            print 'get_user'
+            _SessionToken= request.headers.get('X-AVOSCloud-Session-Token')
+
+            
+            print '_SessionToken=',_SessionToken
+#            user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
+#            print 'session user=',user
+
+            user= User.objects(pk=oid).first()
+            if user is None:
+               return  (jsonify({'status': "fail"}), 400)   # existing user
+            print 'get user next'
+            print 'user.id=',user.id
+            oid = str(user.id)
+            userjson = json_util.dumps(user)
+            print 'userjson',userjson
+            newuserjson = MongoResource.getDocument('user',user.id)
+            print 'newuserjson',newuserjson
+            return newuserjson
+#            return (jsonify({'sessionToken':user.sessionToken,'username': user.username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
+
+     except Exception,e:
+            print e
+#    return (jsonify({'username': user.username}), 201,
+#            {'Location': url_for('get_user', id=user.id, _external=True)})
+
+
+
+
+
 @app.route('/1.1/classes/_User', methods=['get'])
 def get_userbywhere():
      try:
@@ -206,6 +240,55 @@ def put_user(oid):
 #    return (jsonify({'username': user.username}), 201,
 #            {'Location': url_for('get_user', id=user.id, _external=True)})
 
+@app.route('/1.1/users/<path:oid>', methods=['put'])
+def putmobileuser(oid):
+     try:
+            print 'get_user'
+            paramdict = json.loads(request.data)
+            print 'paramdict=',paramdict
+
+            _SessionToken= request.headers.get('X-AVOSCloud-Session-Token')
+
+            
+            print '_SessionToken=',_SessionToken
+            user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
+            print 'session user=',user
+            user= User.objects(pk=oid).first()
+            if user is None:
+               return  (jsonify({'status': "fail"}), 400)   # existing user
+            print 'get user next'
+            print 'user.id=',user.id
+
+            if isinstance(paramdict, dict):
+                        print 'dict'
+            if paramdict.has_key("password"):
+                 print 'remove password'
+                 del paramdict['password']
+            print 'test11'
+#                password = request.json["password"]
+#                request.json["password"] =pwd_context.encrypt(password)
+                
+
+#            if paramdict.has_key['objectId']:
+#                    print 'remove objectId'
+#                    del paramdict['objectId']
+            if paramdict.has_key("objectId"):
+                 print 'remove password'
+                 del paramdict['objectId']
+            print 'test12'
+            if paramdict.has_key('sessionToken'):
+                    del paramdict['sessionToken']
+            print 'test2'
+            paramdict['updatedAt']=MongoResource.getIso8601()
+            MongoResource.updateDocument("user",user.id,paramdict)
+            oid = str(user.id)
+            return (jsonify({"updatedAt":user.updatedAt,"objectId":oid} ), 200)
+
+     except Exception,e:
+            print e
+#    return (jsonify({'username': user.username}), 201,
+#            {'Location': url_for('get_user', id=user.id, _external=True)})
+
 @app.route('/1.1/classes/_User', methods=['POST'])
 def new_user():
      try:
@@ -241,6 +324,49 @@ def new_user():
 #    return (jsonify({'username': user.username}), 201,
 #            {'Location': url_for('get_user', id=user.id, _external=True)})
 
+
+@app.route('/1.1/users', methods=['POST'])
+def newmobileuser():
+     try:
+            print 'new_user'
+            print 'json=',request.json
+            username = request.json.get('username')
+            password = request.json.get('password')
+            if username is None or password is None:
+#               abort(400)    # missing arguments
+                return (jsonify({'status': "fail"}), 400)
+            print 'username=',username
+            print 'password=',password
+            User.objects.all()
+            print 'test1'
+            if User.objects.filter(username=username).first() is not None:
+               return  (jsonify({'status': "fail"}), 400)   # existing user
+            print 'new user next'
+            user = User(username=username)
+            user.hash_password(password)
+#            user.createdAt=time.strftime('%Y-%m-%dT%H:%M:%S')
+#            user.updatedAt=time.strftime('%Y-%m-%dT%H:%M:%S')
+            user.createdAt=MongoResource.getIso8601()
+            user.updatedAt=MongoResource.getIso8601()   
+            if  request.json.has_key("oshopid"):
+                print 'oshop exists'
+                user.oshopid= request.json.get('oshopid')      
+            user.save()
+        #    db.session.add(user)
+        #    db.session.commit()
+            print 'user.id=',user.id
+            user.generate_auth_token(app.config['SECRET_KEY'])
+            print 'sessionToken',user.sessionToken
+            user.save()
+            oid = str(user.id)
+            return jsonify({ "objectId":oid,'sessionToken':user.sessionToken,"createdAt":user.createdAt,"updatedAt":user.updatedAt})
+        
+#            return (jsonify({ 'sessionToken':user.sessionToken,"createdAt":user.createdAt,"updatedAt":user.updatedAt}), 201,{'Location': url_for('/1.1/users', id=oid)})
+     except Exception,e:
+            print e
+#    return (jsonify({'username': user.username}), 201,
+#            {'Location': url_for('get_user', id=user.id, _external=True)})
+
 @app.route('/1.1/login', methods=['get'])
 def login():
      try:
@@ -259,11 +385,12 @@ def login():
                         oid = str(user.id)
                         return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
-                        return (jsonify({'status': "fail"}), 200)
+                       return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
                 except Exception,e:
                     print e
                     return (jsonify({'status': "fail"}), 400)
             else:
+                print 'user is None'
                 return (jsonify({'status': "fail"}), 400)
         #    db.session.add(user)
         #    db.session.commit()
@@ -304,6 +431,7 @@ def loginbypost():
             return (jsonify({'username': user.username}), 201)
      except Exception,e:
             print e
+
 @app.route('/1.1/requestMobilePhoneVerify', methods=['post'])
 def MobilePhonelogin():
      try:
@@ -394,6 +522,18 @@ def verifyMobilePhone(smscode):
 def batch():
          print 'batch request json',request.json
          return (jsonify({'status': "fail"}), 400)
+
+@app.route('/1.1/cloudQuery', methods=['get'])
+def cloudQuery():
+
+            print 'cloudQuery'
+            cql = request.args.get('cql')
+            print 'cql=',cql
+            retdict={}
+            retdict['results']=[]
+            retstr= json.dumps(retdict,default=json_util.default) 
+            return retstr        
+
 class Barber(MongoResource.MResource):
     def __init__(self):
         '''
@@ -472,7 +612,22 @@ class ReviewList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="review" 
+
+class Coupon(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="coupon"
+class CouponList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="coupon" 
                 
+                
+                                
         
 class Makeup(MongoResource.MResource):
     def __init__(self):
@@ -635,8 +790,8 @@ api.add_resource(AppointmentList, '/1.1/classes/appointment')
 api.add_resource(Appointment, '/1.1/classes/appointment/<string:todo_id>')
 
 
-api.add_resource(MycollectionList, '/1.1/classes/mycollection')
-api.add_resource(Mycollection, '/1.1/classes/mycollection/<string:todo_id>')
+api.add_resource(MycollectionList, '/1.1/classes/collection')
+api.add_resource(Mycollection, '/1.1/classes/collection/<string:todo_id>')
 
 
 
@@ -658,6 +813,11 @@ api.add_resource(Suitpromotion, '/1.1/classes/suitpromotion/<string:todo_id>')
 
 api.add_resource(ReviewList, '/1.1/classes/review')
 api.add_resource(Review, '/1.1/classes/review/<string:todo_id>')
+
+
+api.add_resource(CouponList, '/1.1/classes/coupon')
+api.add_resource(Coupon, '/1.1/classes/coupon/<string:todo_id>')
+
 
 
 
