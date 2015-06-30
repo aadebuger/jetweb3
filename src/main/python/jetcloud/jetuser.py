@@ -28,6 +28,11 @@ class User(Document):
     sessionToken=StringField(required=False)
     obarberid =StringField()
     oshopid  = StringField() 
+    pushGroupId=StringField()
+    pushId=StringField()
+    objectId=StringField()
+    sex = StringField()
+    nickname = StringField()
     def hash_password(self, password):
         self.password = pwd_context.encrypt(password)
         
@@ -46,7 +51,7 @@ class User(Document):
         self.save()    
         
          
-    def generate_auth_token(self, secret_key,expiration=360000):
+    def generate_auth_token(self, secret_key,expiration=3600000):
         s = Serializer(secret_key, expires_in=expiration)
         print 'self.id =',self.id
         self.sessionToken=s.dumps(str(self.id))
