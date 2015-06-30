@@ -84,6 +84,10 @@ def postResource(documentname, request):
 
             timestr =MongoResource.getIso8601()
             request['createdAt']=timestr
+            if request.has_key("location"):
+                    print 'find location'
+                    location = request['location']
+                    del location["__type"]
             ret = db[documentname].insert(request)      
             print str(ret)
             retdict = {"objectId":str(ret),'createdAt':timestr}
