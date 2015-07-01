@@ -170,7 +170,9 @@ class MResourceList(Resource):
         db = client.test_database
         print "list get=",request
         searchword = request.args.get('where', '')
-        offset = int(request.args.get('offset', '0'))
+#        offset = int(request.args.get('offset', '0'))
+        offset = int(request.args.get('skip', '0'))
+
         limit = int(request.args.get('limit', '0'))
         order= request.args.get('order', '')
         
@@ -234,6 +236,7 @@ class MResourceList(Resource):
                 del news["_id"]
 #                news['id']=oid
                 news['objectId']=oid
+                print 'oid=',oid
             newsv.append(news)
 #        print 'newsv=',newsv
         retdict={}
@@ -241,6 +244,7 @@ class MResourceList(Resource):
 #        return json.dumps(newsv,default=json_util.default)        
         retstr= json.dumps(newsv,default=json_util.default)  
         newdict = json.loads(retstr)  
+        client.close()
         return retdict
     def post(self):
         print "post=",request
@@ -264,7 +268,9 @@ class MResourceList(Resource):
             retdict = {"objectId":str(ret),'createdAt':timestr}
             self.after_save();
 #            return json.dumps(retdict),201
+            client.close()
             return retdict
+           
         except Exception,e:
             print e
         return "111"
@@ -300,6 +306,7 @@ class MResource(Resource):
         retstr = json.dumps(document,default=json_util.default)      
         print 'retstr=',retstr  
         newdict = json.loads(retstr)  
+        client.close()
         return newdict
     def delete(self, todo_id):
         print 'todo_id',todo_id
@@ -307,7 +314,8 @@ class MResource(Resource):
         client = MongoClient(util.getMydbip())
         db = client.test_database
         ret  = db[self.documentname].remove({'_id': ObjectId(todo_id)})   
-        print 'ret=',ret     
+        print 'ret=',ret   
+        client.close()  
         return {"code":200};
 
     def put(self, todo_id):
@@ -325,15 +333,26 @@ class MResource(Resource):
             db = client.test_database
             opword = request.args.get('op', '')
             print 'opword=',opword;
+            dict1 = request.json
+            if dict1.has_key("location"):
+                     print 'location=',dict1['location']
+                     mylocation = dict1['location']
+                     del mylocation["__type"]
+
+                             
             updatedAt= time.strftime('%Y-%m-%d %H:%M:%S')
             updatedAt =getIso8601()
             request.json['updatedAt']=updatedAt
+            print 'request.json=',request.json
+
             if opword=='':
+                print 'test1'
                 ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$set":request.json})      
             else:
                 ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{opword:request.json}) 
             print 'ret=',ret
             retdict = {"id":todo_id,"updatedAt":updatedAt}
+            client.close()
             return retdict
 #            return json.dumps(retdict)
         except Exception,e:
