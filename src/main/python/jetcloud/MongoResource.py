@@ -50,7 +50,7 @@ def updateDocument(document,todo_id,json):
             db = client.stylemaster
             ret = db[document].update({'_id': ObjectId(todo_id)},{"$set":json})
             print 'ret=',ret
-                 
+            client.close()
 
 def getDocument(documentname,todo_id):
 
@@ -69,7 +69,8 @@ def getDocument(documentname,todo_id):
             document['objectId']=oid
             
             retstr = json.dumps(document,default=json_util.default)      
-            print 'retstr=',retstr  
+            print 'retstr=',retstr 
+            client.close()
             return retstr     
 
 
