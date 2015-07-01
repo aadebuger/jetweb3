@@ -227,7 +227,7 @@ def get_userbywhere():
             print 'newsv=',newsv
             retdict={}
             retdict['results']=newsv
-
+            client.close()
             return jsonify(retdict)
 #            return jsonify({'sessionToken':user.sessionToken,'username': user.username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} )
 
