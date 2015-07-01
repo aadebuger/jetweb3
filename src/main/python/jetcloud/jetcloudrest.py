@@ -135,6 +135,30 @@ def get_user(oid):
 #            {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
+#  the import things safe 
+@app.route('/1.1/users/<path:oid>', methods=['delete'])
+def removemobileuseronlytest(oid):
+     try:
+            print 'get_user'
+            _SessionToken= request.headers.get('X-AVOSCloud-Session-Token')
+
+            
+            print '_SessionToken=',_SessionToken
+#            user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
+#            print 'session user=',user
+
+            user= User.objects(pk=oid).first()
+            if user is None:
+               return  (jsonify({'status': "fail"}), 400)   # existing user
+            print 'user=',user
+            user.delete();
+            return jsonify({"code":200})
+     except Exception,e:
+            print e
+#    return (jsonify({'username': user.username}), 201,
+#            {'Location': url_for('get_user', id=user.id, _external=True)})
+
+
 
 @app.route('/1.1/users/<path:oid>', methods=['get'])
 def getmobileuser(oid):
@@ -459,7 +483,33 @@ def MobilePhonelogin():
             return (jsonify({'username': user.username}), 201)
      except Exception,e:
             print e
-            
+@app.route('/1.1/requestLoginSmsCode', methods=['post'])
+def requestLoginSmsCode():
+     try:
+            print 'login'
+            username = request.args.get('mobilePhoneNumber')
+            if username is None :
+                abort(400)    # missing arguments
+            print 'username=',username
+
+            user =User.objects.filter(username=username).first()
+            if  user is not None:
+                try:
+                    if user.build_smscode():
+                        print 'build_smscode ok'
+                        return (jsonify({'status': "ok"}), 200)
+                    else:
+                        return (jsonify({'status': "fail"}), 200)
+                except Exception,e:
+                    print e
+                    return (jsonify({'status': "fail"}), 400)
+            else:
+                return (jsonify({'status': "fail"}), 400)
+        #    db.session.add(user)
+        #    db.session.commit()
+            return (jsonify({'username': user.username}), 201)
+     except Exception,e:
+            print e            
             
 @app.route('/1.1/usersByMobilePhone', methods=['post'])
 def usersByMobilePhone():
