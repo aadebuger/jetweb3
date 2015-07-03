@@ -170,7 +170,7 @@ class MResourceList(Resource):
         return True;
     def after_save(self):
         print 'after_save1'
-    def get(self):
+    def get1(self):
         print 'get'
  #       args = parser.parse_args()
  #       print 'args=',args        
@@ -209,6 +209,102 @@ class MResourceList(Resource):
                             ret = db[self.documentname].find().sort([('_id', -1)]).limit(limit)
                         else:
                             ret = db[self.documentname].find().sort([('_id', -1)]).skip(offset).limit(limit)
+
+            except Exception,e:
+                    print e
+        else:
+             dict = json.loads(searchword)
+             if dict.has_key("objectId"):
+                    oid = dict["objectId"]
+                    dict['_id']=ObjectId(oid)
+                    del dict["objectId"]
+             if dict.has_key("location"):
+                     print 'location=',dict['location']
+                     mylocation = dict['location']
+                     if mylocation.has_key('$nearSphere'):
+                             mylocation['$near'] = mylocation['$nearSphere']
+                             del mylocation['$near']["__type"]
+#                            mylocation['$near']={'latitude': 39.9087144,  ,'longitude': 116.397389}
+                            
+                             del mylocation['$nearSphere']
+#                    del dict['location']
+             print 'new dict=',dict
+             ret = db[self.documentname].find(dict,self.projectfields)
+             orderv = order.split(",")
+             print 'orderv=',orderv
+             if order is not "":
+                 print 'order sort'
+                 for sortvalue in orderv:
+                
+                    if sortvalue.startswith("-"):
+                         ret.sort(sortvalue[1],-1)
+                    else:
+                        ret.sort(sortvalue)
+        newsv = [];
+        for news in ret:
+            if news.get("id")==None:
+                oid =  str(news["_id"])
+                del news["_id"]
+#                news['id']=oid
+                news['objectId']=oid
+                print 'oid=',oid
+            newsv.append(news)
+#        print 'newsv=',newsv
+        retdict={}
+        retdict['results']=newsv
+#        return json.dumps(newsv,default=json_util.default)        
+        retstr= json.dumps(newsv,default=json_util.default)  
+        newdict = json.loads(retstr)  
+#        client.close()
+        return retdict
+
+
+    def get(self):
+        print 'get'
+ #       args = parser.parse_args()
+ #       print 'args=',args        
+#        client = MongoClient(util.getMydbip())
+        client = getMclient()
+        db = client.test_database
+        print "list get=",request
+        searchword = request.args.get('where', '')
+#        offset = int(request.args.get('offset', '0'))
+        offset = int(request.args.get('skip', '0'))
+
+        limit = int(request.args.get('limit', '0'))
+        order= request.args.get('order', '')
+        
+        
+        
+        print 'searchword=',searchword
+        print 'offset=',offset
+        print 'limit=',limit
+        print 'order=',order
+        
+        print 'self.projectfields=',self.projectfields
+        
+#        ret = db.news.find_one()
+        if searchword=='' or searchword=='{}':
+            print 'searchword=null'
+#sort({"createdAt":-1})       
+
+            orderv = order.split(",")
+            print 'orderv=',orderv
+            sortlist=[]
+            if order is not "":
+                 print 'order sort'
+
+                 for sortvalue in orderv:
+                
+                    if sortvalue.startswith("-"):
+                        sortlist.append((sortvalue[1],-1))
+                    else:
+                        sortlist.append((sortvalue[1],1))
+                                  
+            try: 
+                ret= db[self.documentname].find({},projection=self.projectfields,skip=offset,limit=limit,sort=sortlist)
+                
+                
             except Exception,e:
                     print e
         else:
