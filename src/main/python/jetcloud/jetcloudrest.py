@@ -327,7 +327,8 @@ def new_user():
             User.objects.all()
             print 'test1'
             if User.objects.filter(username=username).first() is not None:
-               return  (jsonify({'status': "fail"}), 400)   # existing user
+                   return  (jsonify({'status': "fail"}), 400)   # existing user
+
             print 'new user next'
             user = User(username=username)
             user.hash_password(password)
@@ -630,12 +631,15 @@ class Order(MongoResource.MResource):
         Constructor
         '''
         self.documentname ="order"
+        self.projectfields ={"charge":0,"latitude":0}
 class OrderList(MongoResource.MResourceList):
     def __init__(self):
         '''
         Constructor
         '''
         self.documentname ="order"     
+#        self.projectfields ={"charge":0,"latitude":0}
+        self.projectfields ={"charge":0,"latitude":0,"longitude":0}
 
 class Service(MongoResource.MResource):
     def __init__(self):
