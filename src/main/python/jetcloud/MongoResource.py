@@ -7,7 +7,8 @@ Created on 2015年5月30日
 
 import json
 from flask import Flask, request
-from flask.ext.restful import reqparse, abort, Api, Resource
+#from flask.ext.restful import reqparse, abort, Api, Resource
+from flask_restful import Resource, Api
 from pymongo import MongoClient
 from pymongo import collection
 #from pymongo import ReturnDocument
@@ -93,7 +94,8 @@ def searchDocument(documentname,query,offset, limit,order):
         
 #        ret = db.news.find_one()
 
-        text_results = db.command('text', documentname, search=query, filter={'related':True}, limit=SEARCH_LIMIT)
+#        text_results = db.command('text', documentname, search=query, filter={'related':True}, limit=10)
+
         newsv=[]
         for news in text_results:
             print 'news=',news
@@ -156,12 +158,14 @@ def newBucketUpload(documentname,size,bucket,url,name):
             print e
         return None  
 class MResourceList(Resource):
+    projectfields={"mtest":0}
     def __init__(self,documentname):
         '''
         Constructor
         '''
         self.documentname =documentname
-        
+
+      
     def before_save(self):
         return True;
     def after_save(self):
@@ -188,6 +192,7 @@ class MResourceList(Resource):
         print 'limit=',limit
         print 'order=',order
         
+        print 'self.projectfields=',self.projectfields
         
 #        ret = db.news.find_one()
         if searchword=='' or searchword=='{}':
@@ -196,7 +201,7 @@ class MResourceList(Resource):
             try: 
                     if limit==0:
                         if offset ==0:
-                            ret = db[self.documentname].find().sort([('_id', -1)])
+                            ret = db[self.documentname].find({},self.projectfields).sort([('_id', -1)])
                         else:
                             ret = db[self.documentname].find().sort([('_id', -1)]).offset(offset);
                     else:
@@ -223,7 +228,7 @@ class MResourceList(Resource):
                              del mylocation['$nearSphere']
 #                    del dict['location']
              print 'new dict=',dict
-             ret = db[self.documentname].find(dict)
+             ret = db[self.documentname].find(dict,self.projectfields)
              orderv = order.split(",")
              print 'orderv=',orderv
              if order is not "":
