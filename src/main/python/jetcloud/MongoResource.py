@@ -297,9 +297,9 @@ class MResourceList(Resource):
                  for sortvalue in orderv:
                 
                     if sortvalue.startswith("-"):
-                        sortlist.append((sortvalue[1],-1))
+                        sortlist.append((sortvalue[1:],-1))
                     else:
-                        sortlist.append((sortvalue[1],1))
+                        sortlist.append((sortvalue,1))
                                   
             try: 
                 ret= db[self.documentname].find({},projection=self.projectfields,skip=offset,limit=limit,sort=sortlist)
@@ -324,7 +324,7 @@ class MResourceList(Resource):
                              del mylocation['$nearSphere']
 #                    del dict['location']
              print 'new dict=',dict
-             ret = db[self.documentname].find(dict,self.projectfields)
+             ret = db[self.documentname].find(dict,projection=self.projectfields,skip=offset,limit=limit)
              orderv = order.split(",")
              print 'orderv=',orderv
              if order is not "":
@@ -332,7 +332,7 @@ class MResourceList(Resource):
                  for sortvalue in orderv:
                 
                     if sortvalue.startswith("-"):
-                         ret.sort(sortvalue[1],-1)
+                         ret.sort(sortvalue[1:],-1)
                     else:
                         ret.sort(sortvalue)
         newsv = [];
