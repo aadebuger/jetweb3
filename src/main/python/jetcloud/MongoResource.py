@@ -438,6 +438,15 @@ class MResource(Resource):
 #        client.close()  
         return {"code":200};
 
+    def isOp(self,dict):
+            myitemlist = dict.items()
+            if len(myitemlist)==1:
+                (key,value)= myitemlist[0]
+                if value.has_key("__op") and  value.has_key("objects"):
+                            op = value["__op"]
+                            if op is 'Add':
+                                return ("$push",{key: value["objects"]})
+            return None
     def put(self, todo_id):
         print "put=",request
         print 'todo_id',todo_id
@@ -461,17 +470,23 @@ class MResource(Resource):
                      mylocation = dict1['location']
                      del mylocation["__type"]
 
+            
                              
             updatedAt= time.strftime('%Y-%m-%d %H:%M:%S')
             updatedAt =getIso8601()
-            request.json['updatedAt']=updatedAt
-            print 'request.json=',request.json
 
+            
+            value = self.isOp(request.json)
+            newdict = request.json
+            if value is not None:
+                (opword,newdict)=value
+            newdict['updatedAt']=updatedAt
+            print 'request.json=',newdict
             if opword=='':
                 print 'test1'
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$set":request.json})      
+                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$set":newdict})      
             else:
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{opword:request.json}) 
+                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{opword:newdict}) 
             print 'ret=',ret
             retdict = {"id":todo_id,"updatedAt":updatedAt}
             self.after_put(todo_id,request.json,"put");
