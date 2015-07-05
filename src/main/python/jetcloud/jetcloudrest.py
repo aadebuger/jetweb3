@@ -750,6 +750,10 @@ class Mycollection(MongoResource.MResource):
         Constructor
         '''
         self.documentname ="collection"
+    def after_put(self,objectid,datajson,action):
+        
+        print 'after_put collection',objectid,action  
+        MongoResource.pushEvent("collection",objectid,datajson, "put")   
 class MycollectionList(MongoResource.MResourceList):
     def __init__(self):
         '''
@@ -760,10 +764,7 @@ class MycollectionList(MongoResource.MResourceList):
         
         print 'after_save collection',objectid,action  
         MongoResource.pushEvent("collection",objectid,{}, "post")     
-    def after_put(self,objectid,datajson,action):
-        
-        print 'after_save collection',objectid,action  
-        MongoResource.pushEvent("collection",objectid,datajson, "put")     
+  
                 
 class Role(MongoResource.MResource):
     def __init__(self):
