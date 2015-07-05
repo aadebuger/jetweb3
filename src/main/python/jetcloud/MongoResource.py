@@ -35,13 +35,15 @@ def getMclient():
 
 def getIso8601():
    return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+"Z"
-def pushEvent(document,objectjson,action):
+def pushEvent(document,objectjson,datajson,action):
           client = MongoClient(util.getMydbip())
 
           db = client.test_database
           dict={};
           dict['objectname']=document
           dict['object']= objectjson
+          dict['data']= datajson
+          
           dict['action']=action
           dict['createdAt']=getIso8601()
           ret = db["event"].insert(dict)  
@@ -398,6 +400,8 @@ class MResource(Resource):
         Constructor
         '''
         self.documentname =documentname
+    def after_put(self,objectid,putjson,action):
+        print 'after_put1',objectid,putjson,action
     def get(self, todo_id):
         print 'MResource  get todo_id',todo_id
 #        client = MongoClient(util.getMydbip())
@@ -420,6 +424,7 @@ class MResource(Resource):
         retstr = json.dumps(document,default=json_util.default)      
         print 'retstr=',retstr  
         newdict = json.loads(retstr)  
+
 #       client.close()
         return newdict
     def delete(self, todo_id):
@@ -469,6 +474,8 @@ class MResource(Resource):
                 ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{opword:request.json}) 
             print 'ret=',ret
             retdict = {"id":todo_id,"updatedAt":updatedAt}
+            self.after_put(todo_id,request.json,"put");
+                
 #            client.close()
             return retdict
 #            return json.dumps(retdict)
