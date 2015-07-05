@@ -644,6 +644,10 @@ class OrderList(MongoResource.MResourceList):
         self.documentname ="order"     
 #        self.projectfields ={"charge":0,"latitude":0}
         self.projectfields ={"charge":0,"latitude":0,"longitude":0}
+    def after_save(self,objectid,action):
+        
+        print 'after_save collection',objectid,action  
+        MongoResource.pushEvent("order",objectid, "post")    
 
 class Service(MongoResource.MResource):
     def __init__(self):
