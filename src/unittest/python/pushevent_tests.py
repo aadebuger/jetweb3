@@ -29,7 +29,12 @@ class Test(unittest.TestCase):
         print 'Newcollection rv=',rv
         print 'Newcollection rv=',rv.data
 
-
+    def testPutcollection(self):
+        print 'putcollection'
+        rv=self.app.put('/1.1/classes/collection/5598ce987339fc068a9bbabd',data="""{"mycollection":"zhuanghua2"}""",content_type="application/json")
+                
+        print 'Putcollection rv=',rv
+        print 'Putcollection rv=',rv.data
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
