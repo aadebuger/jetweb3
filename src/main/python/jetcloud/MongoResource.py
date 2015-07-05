@@ -8,7 +8,7 @@ Created on 2015年5月30日
 import json
 from flask import Flask, request
 #from flask.ext.restful import reqparse, abort, Api, Resource
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api,abort
 from pymongo import MongoClient
 from pymongo import collection
 #from pymongo import ReturnDocument
@@ -35,15 +35,17 @@ def getMclient():
 
 def getIso8601():
    return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+"Z"
-def pushEvent(document,objectjson):
+def pushEvent(document,objectjson,action):
           client = MongoClient(util.getMydbip())
 
-          db = client.stylemaster
+          db = client.test_database
           dict={};
           dict['objectname']=document
           dict['object']= objectjson
+          dict['action']=action
+          dict['createdAt']=getIso8601()
           ret = db["event"].insert(dict)  
-          print 'ret=',ret
+          print 'push event=',ret
     
     
     
@@ -78,7 +80,7 @@ def getDocument(documentname,todo_id):
             return retstr     
 
 
-def searchDocument(documentname,query,offset, limit,order):
+def searchDocument(documentname,projectfields,query,offset, limit,order):
         print 'search'
         
         client = MongoClient(util.getMydbip())
@@ -91,13 +93,17 @@ def searchDocument(documentname,query,offset, limit,order):
         print 'limit=',limit
         print 'order=',order
         
-        
+        dict = {'tags':{'$in':query}}
+           
 #        ret = db.news.find_one()
 
 #        text_results = db.command('text', documentname, search=query, filter={'related':True}, limit=10)
 
+        ret = db[documentname].find(dict,projection=projectfields,skip=offset,limit=limit)
+ 
+ 
         newsv=[]
-        for news in text_results:
+        for news in ret:
             print 'news=',news
             print 'news get id',news.get("id")
             if news.get("id")==None:
@@ -113,7 +119,6 @@ def searchDocument(documentname,query,offset, limit,order):
         retstr= json.dumps(newsv,default=json_util.default)  
         newdict = json.loads(retstr)  
         return retdict
-    
     
     
                         
@@ -168,8 +173,8 @@ class MResourceList(Resource):
       
     def before_save(self):
         return True;
-    def after_save(self):
-        print 'after_save1'
+    def after_save(self,objectid,action):
+        print 'after_save1',objectid,action
     def get1(self):
         print 'get'
  #       args = parser.parse_args()
@@ -374,7 +379,7 @@ class MResourceList(Resource):
             ret = db[self.documentname].insert(request.json)      
             print str(ret)
             retdict = {"objectId":str(ret),'createdAt':timestr}
-            self.after_save();
+            self.after_save(str(ret),"post");
 #            return json.dumps(retdict),201
  #           client.close()
             return retdict
