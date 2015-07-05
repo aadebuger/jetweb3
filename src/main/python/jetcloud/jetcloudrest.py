@@ -752,7 +752,7 @@ class Mycollection(MongoResource.MResource):
         self.documentname ="collection"
     def after_put(self,objectid,datajson,action):
         
-        print 'after_put collection',objectid,action  
+        print 'after_putq collection',objectid,action  
         MongoResource.pushEvent("collection",objectid,datajson, "put")   
 class MycollectionList(MongoResource.MResourceList):
     def __init__(self):
