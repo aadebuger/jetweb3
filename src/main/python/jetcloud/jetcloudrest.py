@@ -646,8 +646,8 @@ class OrderList(MongoResource.MResourceList):
         self.projectfields ={"charge":0,"latitude":0,"longitude":0}
     def after_save(self,objectid,action):
         
-        print 'after_save collection',objectid,action  
-        MongoResource.pushEvent("order",objectid, "post")    
+        print 'after_save order',objectid,action  
+        MongoResource.pushEvent("order",objectid,{}, "post")    
 
 class Service(MongoResource.MResource):
     def __init__(self):
@@ -759,8 +759,12 @@ class MycollectionList(MongoResource.MResourceList):
     def after_save(self,objectid,action):
         
         print 'after_save collection',objectid,action  
-        MongoResource.pushEvent("collection",objectid, "post")     
+        MongoResource.pushEvent("collection",objectid,{}, "post")     
+    def after_put(self,objectid,datajson,action):
         
+        print 'after_save collection',objectid,action  
+        MongoResource.pushEvent("collection",objectid,datajson, "put")     
+                
 class Role(MongoResource.MResource):
     def __init__(self):
         '''
