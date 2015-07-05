@@ -579,7 +579,11 @@ def cloudQuery():
 
             print 'cloudQuery'
             cql = request.args.get('cql')
+            
             print 'cql=',cql
+            documentname="barber"
+            queryvalue="hello"
+            MongoResource.searchDocument(document,{},queryvalue,0,10,"")
             retdict={}
             retdict['results']=[]
             retstr= json.dumps(retdict,default=json_util.default) 
@@ -748,7 +752,10 @@ class MycollectionList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="collection" 
+    def after_save(self,objectid,action):
         
+        print 'after_save collection',objectid,action  
+        MongoResource.pushEvent("collection",objectid, "post")     
         
 class Role(MongoResource.MResource):
     def __init__(self):
@@ -801,6 +808,21 @@ class feedbackList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="feedback"
+
+
+class Event(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="event"
+class EventList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="event"
+        
 
 class users(MongoAclResource.MAclResource):
     def __init__(self):
@@ -872,6 +894,8 @@ api.add_resource(Review, '/1.1/classes/review/<string:todo_id>')
 api.add_resource(CouponList, '/1.1/classes/coupon')
 api.add_resource(Coupon, '/1.1/classes/coupon/<string:todo_id>')
 
+api.add_resource(EventList, '/1.1/classes/event')
+api.add_resource(Event, '/1.1/classes/event/<string:todo_id>')
 
 
 
@@ -890,6 +914,19 @@ api.add_resource(ObjectDemoTableRead, '/1.1/classes/ObjectDemoTableRead/<string:
 
 api.add_resource(users, '/1.1/classes/users/<string:todo_id>')
 
+def coreRoute():
+    api.add_resource(OrderList, '/1.1/classes/order')
+    api.add_resource(Order, '/1.1/classes/order/<string:todo_id>')
+#  mobile order post
+#  mobile order get
+
+def yhRoute():
+        pass
+#  mobile order  put 
+
+def materRoute():
+        pass
+    
 
 
 if __name__ == '__main__':
