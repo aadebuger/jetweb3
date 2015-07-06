@@ -35,6 +35,12 @@ class Test(unittest.TestCase):
                 
         print 'Putcollection rv=',rv
         print 'Putcollection rv=',rv.data
+    def testPutcollectionadd(self):
+        print 'putcollection'
+        rv=self.app.put('/1.1/classes/collection/5598ce987339fc068a9bbabd',data="""{"myskills":{"__op":"Add","objects":["flying","kungfu"]}}""",content_type="application/json")
+                
+        print 'Putcollection rv=',rv
+        print 'Putcollection rv=',rv.data
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
