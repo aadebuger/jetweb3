@@ -327,6 +327,7 @@ def new_user():
             User.objects.all()
             print 'test1'
             if User.objects.filter(username=username).first() is not None:
+                   print 'exist user'
                    return  (jsonify({'status': "fail"}), 400)   # existing user
 
             print 'new user next'
@@ -335,6 +336,16 @@ def new_user():
             user.createdAt=time.strftime('%Y-%m-%dT%H:%M:%S')
             user.updatedAt=time.strftime('%Y-%m-%dT%H:%M:%S')
             user.generate_auth_token(app.config['SECRET_KEY'])
+            obarberid = request.json.get('obarberid')
+            oshopid = request.json.get("oshopid")
+            if obarberid is not None:
+                    print 'obarberid  not none'
+                    user.obarberid=obarberid
+            if oshopid is not None:
+                    print 'oshopid not none'
+                    user.oshopid=oshopid
+            
+                        
             print 'sessionToken',user.sessionToken
             user.save()
         #    db.session.add(user)
