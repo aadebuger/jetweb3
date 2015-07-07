@@ -418,6 +418,8 @@ def login():
                 try:
                     if user.verify_password(password):
                         print 'verify_password ok'
+                        user.generate_auth_token(app.config['SECRET_KEY'])
+                        print 'new sessiontoken', user.sessionToken        
                         oid = str(user.id)
                         return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
@@ -453,6 +455,8 @@ def loginbypost():
                 try:
                     if user.verify_password(password):
                         print 'verify_password ok'
+                        user.generate_auth_token(app.config['SECRET_KEY'])
+                        print 'new sessiontoken', user.sessionToken 
                         oid = str(user.id)
                         return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
