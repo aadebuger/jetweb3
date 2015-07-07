@@ -274,14 +274,14 @@ def putmobileuser(oid):
             _SessionToken= request.headers.get('X-AVOSCloud-Session-Token')
 
             
-            print '_SessionToken=',_SessionToken
+            print '_SessionTokenput=',_SessionToken
             user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
-            print 'session user=',user
+            print 'session userput=',user
             user= User.objects(pk=oid).first()
             if user is None:
                return  (jsonify({'status': "fail"}), 400)   # existing user
-            print 'get user next'
-            print 'user.id=',user.id
+            print 'get user nextput'
+            print 'putuser.id=',user.id
 
             if isinstance(paramdict, dict):
                         print 'dict'
