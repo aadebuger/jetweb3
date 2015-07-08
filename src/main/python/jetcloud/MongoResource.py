@@ -331,17 +331,29 @@ class MResourceList(Resource):
                              del mylocation['$nearSphere']
 #                    del dict['location']
              print 'new dict=',dict
-             ret = db[self.documentname].find(dict,projection=self.projectfields,skip=offset,limit=limit)
-             orderv = order.split(",")
-             print 'orderv=',orderv
+             sortlist=[]
              if order is not "":
                  print 'order sort'
+
                  for sortvalue in orderv:
                 
                     if sortvalue.startswith("-"):
-                         ret.sort(sortvalue[1:],-1)
+                        sortlist.append((sortvalue[1:],-1))
                     else:
-                        ret.sort(sortvalue)
+                        sortlist.append((sortvalue,1))
+                                  
+             ret = db[self.documentname].find(dict,projection=self.projectfields,skip=offset,limit=limit,sort=sortlist)
+
+#             orderv = order.split(",")
+#             print 'orderv=',orderv
+#             if order is not "":
+#                 print 'order sort'
+#                 for sortvalue in orderv:
+                
+#                    if sortvalue.startswith("-"):
+#                         ret.sort(sortvalue[1:],-1)
+#                    else:
+#                        ret.sort(sortvalue)
         newsv = [];
         for news in ret:
             if news.get("id")==None:
