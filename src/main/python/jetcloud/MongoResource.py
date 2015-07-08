@@ -332,6 +332,7 @@ class MResourceList(Resource):
 #                    del dict['location']
              print 'new dict=',dict
              sortlist=[]
+             orderv = order.split(",")
              if order is not "":
                  print 'order sort'
 
