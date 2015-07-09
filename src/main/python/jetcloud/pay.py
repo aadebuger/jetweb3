@@ -29,7 +29,7 @@ def processEvent(item):
         print 'e=',e
 def processOrder( objectid,form):
       print 'objectid',objectid
-      pushEvent("order", form)
+#      pushEvent("order", form)
     
 @app.route('/webhook', methods=['post'])
 def do_webhook():
