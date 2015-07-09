@@ -164,6 +164,18 @@ def newBucketUpload(documentname,size,bucket,url,name):
         except Exception,e:
             print e
         return None  
+
+def compaLocation(mydict):
+                     print 'location=',mydict['location']
+                     mylocation = mydict['location']
+                     if mylocation.has_key('$nearSphere'):
+                             oldgeo =  mylocation['$nearSphere']
+                             newgeo = (oldgeo['longitude'],oldgeo['latitude'])
+                             mylocation['$nearSphere']=newgeo
+                             mydict['location1']=mylocation
+                             del mydict["location"]
+                     print mydict 
+                               
 class MResourceList(Resource):
     projectfields={"mtest":0}
     def __init__(self,documentname):
@@ -228,12 +240,16 @@ class MResourceList(Resource):
              if dict.has_key("location"):
                      print 'location=',dict['location']
                      mylocation = dict['location']
+
                      if mylocation.has_key('$nearSphere'):
                              mylocation['$near'] = mylocation['$nearSphere']
                              del mylocation['$near']["__type"]
 #                            mylocation['$near']={'latitude': 39.9087144,  ,'longitude': 116.397389}
                             
                              del mylocation['$nearSphere']
+                             
+                             
+            
 #                    del dict['location']
              print 'new dict=',dict
              ret = db[self.documentname].find(dict,self.projectfields)
@@ -322,14 +338,16 @@ class MResourceList(Resource):
                     del dict["objectId"]
              if dict.has_key("location"):
                      print 'location=',dict['location']
-                     mylocation = dict['location']
-                     if mylocation.has_key('$nearSphere'):
-                             mylocation['$near'] = mylocation['$nearSphere']
-                             del mylocation['$near']["__type"]
+#                     mylocation = dict['location']
+#                     if mylocation.has_key('$nearSphere'):
+#                             mylocation['$near'] = mylocation['$nearSphere']
+#                             del mylocation['$near']["__type"]
 #                            mylocation['$near']={'latitude': 39.9087144,  ,'longitude': 116.397389}
                             
-                             del mylocation['$nearSphere']
+#                             del mylocation['$nearSphere']
 #                    del dict['location']
+                     compaLocation(dict)
+                     
              print 'new dict=',dict
              sortlist=[]
              orderv = order.split(",")
