@@ -10,7 +10,15 @@ from bson import json_util
 from bson.objectid import ObjectId
 import util
 import MongoResource
+import MongoAclResource
 
+def getAcl(request):
+    aclcondition = {}
+    user = MongoAclResource.getObjectid(request)
+    if user is None:
+        return {}
+    aclcondition = {'obarberid': user.obarberid}
+    return aclcondition
 def getResouce(documentname,request):
      
         print 'get'
@@ -119,6 +127,8 @@ def putResource(documentname,request,todo_id):
 
             updatedAt =MongoResource.getIso8601()
             request['updatedAt']=updatedAt
+            aclcondition = getAcl(request)
+            print 'aclcondition',aclcondition
             if opword=='':
                 ret = db[documentname].update({'_id': ObjectId(todo_id)},{"$set":request})      
             else:
