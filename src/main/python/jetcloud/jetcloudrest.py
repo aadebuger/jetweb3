@@ -8,6 +8,7 @@ from flask import Flask
 from flask import abort,jsonify
 from flask_restful import reqparse,Resource, Api,request,url_for
 
+import sys
 import json
 import cloudfile
 from mongoengine import * 
@@ -421,7 +422,10 @@ def login():
                         user.generate_auth_token(app.config['SECRET_KEY'])
                         print 'new sessiontoken', user.sessionToken        
                         oid = str(user.id)
-                        return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
+                        if user.obarberid is not None:
+                            return (jsonify({'obarberid':user.obarberid,'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)                        
+                        else:           
+                            return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
                        return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
                 except Exception,e:
@@ -458,7 +462,10 @@ def loginbypost():
                         user.generate_auth_token(app.config['SECRET_KEY'])
                         print 'new sessiontoken', user.sessionToken 
                         oid = str(user.id)
-                        return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
+                        if user.obarberid is not None:
+                            return (jsonify({'obarberid':user.obarberid,'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)                        
+                        else: 
+                            return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
                         return (jsonify({"code":210,"error":"The username and password mismatch."}), 200)
                 except Exception,e:
@@ -664,6 +671,29 @@ class OrderList(MongoResource.MResourceList):
         print 'after_save order',objectid,action  
         MongoResource.pushEvent("order",objectid,{}, "post")    
 
+
+class YhOrder(MongoAclResource.MAclResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="order"
+        self.projectfields ={"charge":0,"latitude":0}
+class YhOrderList(MongoAclResource.MAclResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="order"     
+#        self.projectfields ={"charge":0,"latitude":0}
+        self.projectfields ={"charge":0,"latitude":0,"longitude":0}
+    def after_save(self,objectid,action):
+        
+        print 'after_save order',objectid,action  
+        MongoResource.pushEvent("order",objectid,{}, "post") 
+        
+        
+        
 class Service(MongoResource.MResource):
     def __init__(self):
         '''
@@ -945,7 +975,10 @@ def coreRoute():
 #  mobile order get
 
 def yhRoute():
-        pass
+
+    api.add_resource(YhOrderList, '/1.1/classes/order')
+    api.add_resource(YhOrder, '/1.1/classes/order/<string:todo_id>')
+            
 #  mobile order  put 
 
 def materRoute():
@@ -956,5 +989,8 @@ def materRoute():
 if __name__ == '__main__':
 #    connect('stylemaster',host=util.getMydbip())
     connect('stylemaster',host=util.getMydbip(),read_preference=read_preferences.ReadPreference.PRIMARY)
-            
+
+    if len(sys.argv)>=2:
+            pass
+                    
     app.run(host="0.0.0.0",debug=True)
