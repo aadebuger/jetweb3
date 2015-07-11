@@ -23,25 +23,47 @@ import json
 #from  jetcloudrest import User
 #import jetcloudrest
 from jetuser import *
-def getObjectid(request):
+def getObjectid(request,appsecretkey):
             value = request.headers.get('X-AVOSCloud-Session-Token')
-            print 'value=',value
+            print 'value1=',value
             if value is None:
                 return None
-            user = User.verify_auth_token(value)
+            print 'verify'
+            user = User.verify_auth_token(appsecretkey,value)
+
             return user
-            
+
+def getUserAcl(request,appsecretkey):
+    aclcondition = {}
+    user = getObjectid(appsecretkey,request)
+    print 'user=',user
+    if user is None:
+        return {'userid': "none"}
+    aclcondition = {'userid': str(user.id)}
+    return aclcondition
+                 
+def getBarberUserAcl(request,appsecretkey):
+    aclcondition = {}
+    user = getObjectid(appsecretkey,request)
+    print 'user=',user
+    if user is None:
+        return {'obrberid': {"$in": "none"}}
+    aclcondition = {'obarberid':{"$in": str(user.id)}}
+    return aclcondition
+                 
+                            
 class MAclResource(MResource):
     '''
     classdocs
     '''
 
 
-    def __init__(self,documentname):
+    def __init__(self,documentname,appsecretkey):
         '''
         Constructor
         '''
         self.documentname =documentname
+        self.appsecretkey = appsecretkey
     def get(self, todo_id):
         return MResource.get(self,todo_id)
  
@@ -55,8 +77,15 @@ class MAclResource(MResource):
 #        abort_if_todo_doesnt_exist(todo_id)
         client = getMclient()
         db = client.test_database
+        op = getUserAcl(self.appsecretkey,request)
+        print 'op=',op
+        mydict={}
+        mydict['_id'] =  ObjectId(todo_id)
+        for (d,x) in op.items():
+                    mydict[d]=x
+                    
         try:
-                ret  = db[self.documentname].remove({'_id': ObjectId(todo_id),'ownid':user.id},safe=True)   
+                ret  = db[self.documentname].remove(mydict,safe=True)   
                 print 'ret=',ret     
                 return '', 204
         except Exception, e:
@@ -68,10 +97,7 @@ class MAclResource(MResource):
             print "put request=",request.json
 #            newtodo_id = request.json['id'];
 #            print "newtodo_id=",newtodo_id;
-            user = getObjectid(request);
-            print 'user=',user
-            if  user is None:
-                return 'fail',400
+
             
             client = MongoClient(util.getMydbip())
             try:
@@ -81,14 +107,20 @@ class MAclResource(MResource):
             db = client.test_database
             opword = request.args.get('op', '')
             print 'opword=',opword;
-            updatedAt= time.strftime('%Y-%m-%d %H:%M:%S')
-            request.json['updatedAt']=time.strftime('%Y-%m-%d %H:%M:%S')
+            op = getUserAcl(self.appsecretkey,request)
+            print 'op=',op
+            dict={}
+            dict['_id'] =  ObjectId(todo_id)
+            for (d,x) in op.items():
+                    dict[d]=x
+
+            request.json['updatedAt']=MongoResource.getIso8601()
             if opword=='':
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id),'ownid':user.id},{"$set":request.json})      
+                ret = db[self.documentname].update(dict,{"$set":request.json})      
             else:
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id),'ownid':user.id},{opword:request.json}) 
+                ret = db[self.documentname].update(dict,{opword:request.json}) 
             print 'ret=',ret
-            retdict = {"id":todo_id,"updatedAt":updatedAt}
+            retdict = {"id":todo_id,"updatedAt":request.json['updatedAt']}
             return json.dumps(retdict)
         except Exception,e:
             print e
@@ -96,18 +128,18 @@ class MAclResource(MResource):
     
  
 class MAclResourceList(MResourceList):
-    def __init__(self,documentname):
+    def __init__(self,documentname,getacl):
         '''
         Constructor
         '''
         self.documentname =documentname
-        
+        self.getacl = getacl
     def before_save(self):
         return True;
     def after_save(self):
         print 'after_save1'
     def get(self):
-        print 'get'
+        print 'acl get'
  #       args = parser.parse_args()
  #       print 'args=',args        
 #        client = MongoClient(util.getMydbip())
@@ -122,7 +154,9 @@ class MAclResourceList(MResourceList):
         order= request.args.get('order', '')
         
         
-        
+        print 'self getacl',self.getacl
+        op = self.getacl(self.appsecretkey,request)
+        print 'op=',op
         print 'searchword=',searchword
         print 'offset=',offset
         print 'limit=',limit
@@ -136,18 +170,20 @@ class MAclResourceList(MResourceList):
             try: 
                     if limit==0:
                         if offset ==0:
-                            ret = db[self.documentname].find().sort([('_id', -1)])
+                            ret = db[self.documentname].find(op).sort([('_id', -1)])
                         else:
-                            ret = db[self.documentname].find().sort([('_id', -1)]).offset(offset);
+                            ret = db[self.documentname].find(op).sort([('_id', -1)]).offset(offset);
                     else:
                         if offset == 0 :
-                            ret = db[self.documentname].find().sort([('_id', -1)]).limit(limit)
+                            ret = db[self.documentname].find(op).sort([('_id', -1)]).limit(limit)
                         else:
-                            ret = db[self.documentname].find().sort([('_id', -1)]).skip(offset).limit(limit)
+                            ret = db[self.documentname].find(op).sort([('_id', -1)]).skip(offset).limit(limit)
             except Exception,e:
                     print e
         else:
              dict = json.loads(searchword)
+             for (d,x) in op.items():
+                    dict[d]=x
              if dict.has_key("objectId"):
                     oid = dict["objectId"]
                     dict['_id']=ObjectId(oid)
@@ -202,9 +238,14 @@ class MAclResourceList(MResourceList):
             client = getMclient()
         
             db = client.test_database
-            timestr= time.strftime('%Y-%m-%d %H:%M:%S')
+
             timestr =getIso8601()
             request.json['createdAt']=timestr
+            op = getUserAcl(self.appsecretkey,request)
+            print 'op=',op
+            for (d,x) in op.items():
+                    request.json[d]=x
+                     
             if request.json.has_key("location"):
                     print 'find location'
                     location = request.json['location']
