@@ -28,6 +28,7 @@ import cStringIO
 from bson import json_util
 #import jetuser
 from jetuser import *
+from jetcloud.MongoAclResource import getUserAcl
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
@@ -679,20 +680,47 @@ class YhOrder(MongoAclResource.MAclResource):
         '''
         self.documentname ="order"
         self.projectfields ={"charge":0,"latitude":0}
+        self.getacl = getUserAcl
 class YhOrderList(MongoAclResource.MAclResourceList):
     def __init__(self):
         '''
         Constructor
         '''
-        self.documentname ="order"     
+        self.documentname ="order"   
+        self.appsecretkey =app.config['SECRET_KEY']
 #        self.projectfields ={"charge":0,"latitude":0}
         self.projectfields ={"charge":0,"latitude":0,"longitude":0}
+        self.getacl = getUserAcl
+        print 'self getacl',self.getacl                
     def after_save(self,objectid,action):
         
         print 'after_save order',objectid,action  
         MongoResource.pushEvent("order",objectid,{}, "post") 
         
+
+class BarberOrder(MongoAclResource.MAclResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="order"
+        self.projectfields ={"charge":0,"latitude":0}
+        self.getacl = MongoAclResource.getBarberUserAcl
+class BarberOrderList(MongoAclResource.MAclResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="order"   
+        self.appsecretkey =app.config['SECRET_KEY']
+#        self.projectfields ={"charge":0,"latitude":0}
+        self.projectfields ={"charge":0,"latitude":0,"longitude":0}
+        self.getacl = MongoAclResource.getBarberUserAcl
+        print 'self getacl',self.getacl                
+    def after_save(self,objectid,action):
         
+        print 'after_save order',objectid,action  
+        MongoResource.pushEvent("order",objectid,{}, "post")      
         
 class Service(MongoResource.MResource):
     def __init__(self):
@@ -928,8 +956,6 @@ api.add_resource(Mycollection, '/1.1/classes/collection/<string:todo_id>')
 api.add_resource(RoleList, '/1.1/classes/role')
 api.add_resource(Role, '/1.1/classes/role/<string:todo_id>')
 
-api.add_resource(OrderList, '/1.1/classes/order')
-api.add_resource(Order, '/1.1/classes/order/<string:todo_id>')
 
 api.add_resource(MakeupList, '/1.1/classes/makeup')
 api.add_resource(Makeup, '/1.1/classes/makeup/<string:todo_id>')
@@ -981,16 +1007,19 @@ def yhRoute():
             
 #  mobile order  put 
 
-def materRoute():
-        pass
-    
+def masterRoute():
+    api.add_resource(BarberOrderList, '/1.1/classes/order')
+    api.add_resource(BarberOrder, '/1.1/classes/order/<string:todo_id>')    
 
 
 if __name__ == '__main__':
 #    connect('stylemaster',host=util.getMydbip())
     connect('stylemaster',host=util.getMydbip(),read_preference=read_preferences.ReadPreference.PRIMARY)
 
-    if len(sys.argv)>=2:
-            pass
+    if len(sys.argv)>1:
+            print 'sys',sys.argv[1]
+    else:
+        coreRoute()
+                    
                     
     app.run(host="0.0.0.0",debug=True)
