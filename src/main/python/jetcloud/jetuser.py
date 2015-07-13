@@ -49,7 +49,7 @@ class User(Document):
 #        self.createdAt=time.strftime('%Y-%m-%dT%H:%M:%S')
         self.updatedAt=time.strftime('%Y-%m-%dT%H:%M:%S')
         self.save()    
-        
+        return True
          
     def generate_auth_token(self, secret_key,expiration=3600000):
         s = Serializer(secret_key, expires_in=expiration)
