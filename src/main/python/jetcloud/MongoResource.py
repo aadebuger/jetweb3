@@ -29,7 +29,9 @@ from passlib.apps import custom_app_context as pwd_context
 from pymongo import read_preferences
 
 client1 = MongoClient(util.getMydbip())      
-                     
+    
+
+
 def getMclient():
          return client1
 
