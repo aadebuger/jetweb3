@@ -64,7 +64,12 @@ class Test(unittest.TestCase):
                 
         print 'VerifyMobilePhone rv=',rv
         print 'VerifyMobilePhone rv=',rv.data     
-            
+    def testNewusers13906917736(self):
+        print 'Newusers 13906917736'
+        rv=self.app.post('/1.1/users',data="""{"username":"13906917736","password":"password2"}""",content_type="application/json")
+                
+        print 'Newusers2 rv=',rv
+        print 'Newusers2 rv=',rv.data            
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
