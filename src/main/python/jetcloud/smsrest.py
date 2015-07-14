@@ -64,9 +64,46 @@ def querySmslog(smscode):
 
 
 
-
 @app.route('/1.1/requestMobilePhoneVerify', methods=['post'])
 def MobilePhonelogin():
+     try:
+            print 'MobilePhonelogin'
+            print "put request=",request.json
+            username = request.json.get('mobilePhoneNumber')
+            print 'username=',username
+            if username is None :
+                abort(400)    # missing arguments
+#            User.objects.all()
+            print 'username=',username
+
+#            user =User.objects.filter(username=username).first()
+#            if  user is not None:
+            if  username is not None:
+                print 'not None'
+                try:
+
+                        print 'build_smscode ok'
+#                        send push
+                        newsmscode = newSmscode()
+                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
+    
+                        return (jsonify({'status': "ok"}), 200)
+
+                except Exception,e:
+                    print e
+                    return (jsonify({'status': "fail"}), 400)
+            else:
+                return (jsonify({'status': "fail"}), 400)
+        #    db.session.add(user)
+        #    db.session.commit()
+
+     except Exception,e:
+            print e
+            
+
+
+@app.route('/1.1/requestMobilePhoneVerifyold', methods=['post'])
+def MobilePhoneloginold():
      try:
             print 'MobilePhonelogin'
             print "put request=",request.json
@@ -130,7 +167,9 @@ def verifyMobilePhone(smscode):
     
                 
 if __name__ == '__main__':
-                        
+
+    connect('stylemaster',host=util.getMydbip(),read_preference=read_preferences.ReadPreference.PRIMARY)
+                     
     capp.send_task('smscloud.smstasks.sendsms', args=["13906917736", "456789"], kwargs={})
     
     app.run(host="0.0.0.0",debug=True)
