@@ -166,7 +166,7 @@ def verifyMobilePhoneold(smscode):
      except Exception,e:
             print e
 
-@app.route('/1.1/verifyMobilePhoneold/<path:smscode>', methods=['post'])
+@app.route('/1.1/verifyMobilePhone/<path:smscode>', methods=['post'])
 def verifyMobilePhone(smscode):
      try:
             print 'verifyMobilePhone',smscode
