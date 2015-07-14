@@ -14,6 +14,7 @@ from pymongo import collection
 from jetuser import *
 
 from leancloud import Object,Query
+from pymongo import read_preferences
 import util
 import random
 app = Flask(__name__)
