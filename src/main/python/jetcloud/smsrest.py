@@ -138,8 +138,8 @@ def MobilePhoneloginold():
             return (jsonify({'username': user.username}), 201)
      except Exception,e:
             print e
-@app.route('/1.1/verifyMobilePhone/<path:smscode>', methods=['post'])
-def verifyMobilePhone(smscode):
+@app.route('/1.1/verifyMobilePhoneold/<path:smscode>', methods=['post'])
+def verifyMobilePhoneold(smscode):
      try:
             print 'login'
 #            X-AVOSCloud-Session-Token
@@ -165,7 +165,18 @@ def verifyMobilePhone(smscode):
 
      except Exception,e:
             print e
-    
+
+@app.route('/1.1/verifyMobilePhoneold/<path:smscode>', methods=['post'])
+def verifyMobilePhone(smscode):
+     try:
+            print 'verifyMobilePhone',smscode
+#            X-AVOSCloud-Session-Token
+
+            return (jsonify({'status': "ok"}), 200)
+                    
+
+     except Exception,e:
+            print e    
                 
 if __name__ == '__main__':
 
