@@ -28,7 +28,7 @@ import cStringIO
 from bson import json_util
 #import jetuser
 from jetuser import *
-from jetcloud.MongoAclResource import getUserAcl
+#from jetcloud.MongoAclResource import getUserAcl
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
@@ -255,7 +255,7 @@ def put_user(oid):
                 password = request.json["password"]
                 request.json["password"] =pwd_context.encrypt(password)
                 
-            request.json['updatedAt']=time.strftime('%Y-%m-%d %H:%M:%S')
+            request.json['updatedAt']=MongoResource.getIso8601()
             
             MongoResource.updateDocument("user",user.id,request.json)
             oid = str(user.id)
@@ -680,7 +680,7 @@ class YhOrder(MongoAclResource.MAclResource):
         '''
         self.documentname ="order"
         self.projectfields ={"charge":0,"latitude":0}
-        self.getacl = getUserAcl
+        self.getacl = MongoAclResource.getUserAcl
 class YhOrderList(MongoAclResource.MAclResourceList):
     def __init__(self):
         '''
@@ -690,7 +690,7 @@ class YhOrderList(MongoAclResource.MAclResourceList):
         self.appsecretkey =app.config['SECRET_KEY']
 #        self.projectfields ={"charge":0,"latitude":0}
         self.projectfields ={"charge":0,"latitude":0,"longitude":0}
-        self.getacl = getUserAcl
+        self.getacl = MongoAclResource.getUserAcl
         print 'self getacl',self.getacl                
     def after_save(self,objectid,action):
         
