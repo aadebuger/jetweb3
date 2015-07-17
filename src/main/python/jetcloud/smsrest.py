@@ -29,7 +29,7 @@ capp = Celery('smstasks', broker=os.environ.get('CELERY_BROKER_URL',"amqp://gues
 
 def quicksend(phone,smscode):
     
-        payload = {'method': 'Submit', 'account': 'cf_xingfaner','password':'1234567','mobile':'13906917736','content':"您的验证码是：%s。请不要把验证码泄露给其他人。"%(smscode)}
+        payload = {'method': 'Submit', 'account': 'cf_xingfaner','password':'1234567','mobile':phone,'content':"您的验证码是：%s。请不要把验证码泄露给其他人。"%(smscode)}
 
         ret =requests.get('http://106.ihuyi.cn/webservice/sms.php',params=payload)
         print 'ret=',ret.text
