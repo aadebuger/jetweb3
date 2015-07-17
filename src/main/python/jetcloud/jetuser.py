@@ -29,6 +29,7 @@ class User(Document):
     obarberid =StringField()
     oshopid  = StringField() 
     pushGroupId=ListField()
+    commonaddress=ListField()
     pushId=StringField()
     objectId=StringField()
     sex = StringField()
