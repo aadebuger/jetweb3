@@ -28,7 +28,7 @@ class User(Document):
     sessionToken=StringField(required=False)
     obarberid =StringField()
     oshopid  = StringField() 
-    pushGroupId=StringField()
+    pushGroupId=ListField()
     pushId=StringField()
     objectId=StringField()
     sex = StringField()
