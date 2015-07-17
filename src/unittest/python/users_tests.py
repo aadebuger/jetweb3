@@ -69,7 +69,13 @@ class Test(unittest.TestCase):
         rv=self.app.post('/1.1/users',data="""{"username":"13906917736","password":"password2"}""",content_type="application/json")
                 
         print 'Newusers2 rv=',rv
-        print 'Newusers2 rv=',rv.data            
+        print 'Newusers2 rv=',rv.data    
+    def testLogin13906917736ok(self):
+        print 'Login 13906917736'
+        rv=self.app.get('/1.1/login?username=13906917736&&password=123456')
+                
+        print 'news rv=',rv
+        print 'news rv=',rv.data        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
