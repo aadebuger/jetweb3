@@ -25,6 +25,7 @@ class User(Document):
     phone = StringField(required=False)
     email = EmailField()
     MobilePhoneNumber =StringField()
+    phonenum=StringField()
     sessionToken=StringField(required=False)
     obarberid =StringField()
     oshopid  = StringField() 
