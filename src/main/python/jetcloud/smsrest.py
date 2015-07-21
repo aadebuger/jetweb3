@@ -39,6 +39,7 @@ def parsexml(s, cls=None, coding=None):
     return cls(coding).parse(s) if coding else cls().parse(s)
 
 def parseQuicksendxml(xml):
+        xml  = xml.encode("utf-8")
         r = parsexml(xml,coding='utf-8') 
         print 'r=',r
         result = r['{http://106.ihuyi.cn/}SubmitResult']
