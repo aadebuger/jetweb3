@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on 2015
 
@@ -6,6 +7,7 @@ Created on 2015
 
 import requests
 import json
+from  urllib  import unquote
 #Content-Type: application/json
 
 def clientGet():
@@ -43,9 +45,18 @@ def resetPasswordok():
         payload = """{"mobilePhoneNumber":"13906917736","password":"password"}"""
         payload = json.dumps({"password":"437413"})
         r = requests.put(url,data=payload,headers={'content-type': 'application/json'})
-        print 'r=',r.text                         
+        print 'r=',r.text        
+def searchShop():
+        url = 'http://yh.singfan.cn/1.1/classes/shop?limit=10&skip=0&where=%7B"location"%3A%7B"%24nearSphere"%3A%7B"__type"%3A"GeoPoint"%2C"latitude"%3A39.9087144%2C"longitude"%3A116.397389%7D%7D%2C"tags"%3A%7B"%24in"%3A%5B"吉米"%5D%7D%7D'
+        print 'url=',unquote(url)
+#        url ="http://yh.singfan.cn:5010/1.1/shop?where"
+#        payload = """{"mobilePhoneNumber":"13906917736","password":"password"}"""
+#        payload = json.dumps({"password":"437413"})
+#        r = requests.put(url,data=payload,headers={'content-type': 'application/json'})
+#        print 'r=',r.text                       
 if __name__ == '__main__':
-             clientGet()
+#             clientGet()
+             searchShop()
 #             smscodeGet()
 #            smsCode();
 #            resetPasswordok();     
