@@ -35,6 +35,7 @@ class User(Document):
     objectId=StringField()
     sex = StringField()
     nickname = StringField()
+    imgurl=StringField()
     def hash_password(self, password):
         self.password = pwd_context.encrypt(password)
         
