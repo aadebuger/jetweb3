@@ -593,6 +593,36 @@ def verifyMobilePhone(smscode):
             print e
  
 
+@app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['put'])
+def updatePassword(todo_id):
+     try:
+            print 'todo_id',todo_id
+            paramdict = json.loads(request.data)
+            print 'paramdict=',paramdict
+
+            old_password = paramdict.get('old_password')
+            new_password= paramdict.get("new_password")
+            print 'new_password',new_password
+            _SessionToken= paramdict.get('_SessionToken')
+            print '_SessionToken=',_SessionToken
+            user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
+            print 'session user=',user
+            user= User.objects(pk=todo_id).first()
+            if user is None:
+               return  (jsonify({'status': "fail"}), 400)   # existing user
+            if user.verify_password(old_password):
+                         print 'verify_password ok'  
+                         user.hash_password(new_password)
+                         user.updatedAt=MongoResource.getIso8601() 
+                         user.save()
+                         return (jsonify({"updatedAt":user.updatedAt,"objectId":todo_id} ), 200)
+
+                        
+            return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
+            return 
+     except Exception,e:
+            print e  
+    
 
             
              
