@@ -178,8 +178,8 @@ def MobilePhonelogin():
                         newsmscode = newSmscode()
                         print 'newsmscode',newsmscode
                         newSmslog1(username,newsmscode)
-                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
-    
+#                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
+ 						quicksend(username, newsmscode)      
                         return (jsonify({'status': "ok"}), 200)
 
                 except Exception,e:
