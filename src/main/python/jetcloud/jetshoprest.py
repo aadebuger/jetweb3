@@ -529,25 +529,21 @@ def hairstylepost():
      except Exception,e:
             print e  
             
-@app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['post'])
+@app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['put'])
 def updatePassword(todo_id):
      try:
-            print 'todo_id1',todo_id
+            print 'todo_id',todo_id
             paramdict = json.loads(request.data)
             print 'paramdict=',paramdict
 
             old_password = paramdict.get('old_password')
             new_password= paramdict.get("new_password")
             print 'new_password',new_password
-
-
-            _SessionToken = request.headers.get('X-AVOSCloud-Session-Token')
-            print '_SessionToken value=',value
-
+            _SessionToken= paramdict.get('_SessionToken')
             print '_SessionToken=',_SessionToken
             user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
             print 'session user=',user
-#           user= User.objects(pk=todo_id).first()
+            user= User.objects(pk=todo_id).first()
             if user is None:
                return  (jsonify({'status': "fail"}), 400)   # existing user
             if user.verify_password(old_password):
@@ -562,6 +558,7 @@ def updatePassword(todo_id):
             return 
      except Exception,e:
             print e  
+    
     
     
 class Barber(MongoResource.MResource):
