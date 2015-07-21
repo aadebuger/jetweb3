@@ -327,7 +327,7 @@ class MResourceList(Resource):
                         sortlist.append((sortvalue,1))
                                   
             try: 
-                ret= db[self.documentname].find({},projection=self.projectfields,skip=offset,limit=limit,sort=sortlist)
+                ret= db[self.documentname].find({},self.projectfields,skip=offset,limit=limit,sort=sortlist)
                 
                 
             except Exception,e:
@@ -363,7 +363,7 @@ class MResourceList(Resource):
                     else:
                         sortlist.append((sortvalue,1))
                                   
-             ret = db[self.documentname].find(dict,projection=self.projectfields,skip=offset,limit=limit,sort=sortlist)
+             ret = db[self.documentname].find(dict,self.projectfields,skip=offset,limit=limit,sort=sortlist)
 
 #             orderv = order.split(",")
 #             print 'orderv=',orderv
