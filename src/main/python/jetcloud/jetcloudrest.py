@@ -712,6 +712,26 @@ class OrderList(MongoResource.MResourceList):
         print 'after_save order',objectid,action  
         MongoResource.pushEvent("order",objectid,{}, "post")    
 
+class COrder(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="order"
+        self.projectfields ={"latitude":0}
+class COrderList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="order"     
+#        self.projectfields ={"charge":0,"latitude":0}
+        self.projectfields ={"longitude":0}
+    def after_save(self,objectid,action):
+        
+        print 'after_save order',objectid,action  
+        MongoResource.pushEvent("order",objectid,{}, "post") 
+        
 
 class YhOrder(MongoAclResource.MAclResource):
     def __init__(self):
@@ -1035,15 +1055,18 @@ api.add_resource(ObjectDemoTableRead, '/1.1/classes/ObjectDemoTableRead/<string:
 api.add_resource(users, '/1.1/classes/users/<string:todo_id>')
 
 def coreRoute():
-    api.add_resource(OrderList, '/1.1/classes/order')
-    api.add_resource(Order, '/1.1/classes/order/<string:todo_id>')
+    api.add_resource(COrderList, '/1.1/classes/order')
+    api.add_resource(COrder, '/1.1/classes/order/<string:todo_id>')
 #  mobile order post
 #  mobile order get
 
 def yhRoute():
 
-    api.add_resource(YhOrderList, '/1.1/classes/order')
-    api.add_resource(YhOrder, '/1.1/classes/order/<string:todo_id>')
+#    api.add_resource(YhOrderList, '/1.1/classes/order')
+#    api.add_resource(YhOrder, '/1.1/classes/order/<string:todo_id>')
+    api.add_resource(OrderList, '/1.1/classes/order')
+    api.add_resource(Order, '/1.1/classes/order/<string:todo_id>')
+
             
 #  mobile order  put 
 
@@ -1058,8 +1081,10 @@ if __name__ == '__main__':
 
     if len(sys.argv)>1:
             print 'sys',sys.argv[1]
+            if sys.argv[1]=='core':
+                coreRoute()
     else:
-        coreRoute()
+        yhRoute()
                     
                     
     app.run(host="0.0.0.0",debug=True)
