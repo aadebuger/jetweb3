@@ -9,7 +9,7 @@ import time
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 from passlib.apps import custom_app_context as pwd_context
-class User(Document):
+class User(DynamicDocument):
 #    email = EmailField(required=True, unique=True)
     password = StringField(required=True)
     username = StringField(required=True)
@@ -36,6 +36,9 @@ class User(Document):
     sex = StringField()
     nickname = StringField()
     imgurl=StringField()
+    hairstyle = StringField()
+    likehairstyle=StringField()
+    
     def hash_password(self, password):
         self.password = pwd_context.encrypt(password)
         
