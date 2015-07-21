@@ -137,8 +137,8 @@ def requestPasswordResetBySmsCode():
                         newsmscode = newSmscode()
                         print 'newsmscode',newsmscode
                         newSmslogpass(username,newsmscode)
+                        quicksend(username, newsmscode)                        
 #                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
-                        quicksend(username, newsmscode)   
                         return (jsonify({'status': "ok"}), 200)
 
                 except Exception,e:
@@ -179,7 +179,6 @@ def MobilePhonelogin():
                         print 'newsmscode',newsmscode
                         newSmslog1(username,newsmscode)
 #                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
- 						quicksend(username, newsmscode)      
                         return (jsonify({'status': "ok"}), 200)
 
                 except Exception,e:
