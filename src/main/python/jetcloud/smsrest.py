@@ -23,17 +23,37 @@ api = Api(app)
 
 from celery import Celery
 import os 
+from encoder import XML2Dict
+from decoder import Dict2XML
+
 
 import requests
 capp = Celery('smstasks', broker=os.environ.get('CELERY_BROKER_URL',"amqp://guest@1257.net"))
 
+
+import traceback
+def parsexml(s, cls=None, coding=None):
+    if cls is None:
+        cls = XML2Dict
+
+    return cls(coding).parse(s) if coding else cls().parse(s)
+
+def parseQuicksendxml(xml):
+        r = parsexml(xml,coding='utf-8') 
+        print 'r=',r
+        result = r['{http://106.ihuyi.cn/}SubmitResult']
+        print 'result=',result
+        print 'code=',result['{http://106.ihuyi.cn/}code']
+        print '{http://106.ihuyi.cn/}msg=',result['{http://106.ihuyi.cn/}msg']
+        return (result['{http://106.ihuyi.cn/}code'],result['{http://106.ihuyi.cn/}msg'])
+    
 def quicksend(phone,smscode):
     
         payload = {'method': 'Submit', 'account': 'cf_xingfaner','password':'1234567','mobile':phone,'content':"您的验证码是：%s。请不要把验证码泄露给其他人。"%(smscode)}
 
         ret =requests.get('http://106.ihuyi.cn/webservice/sms.php',params=payload)
         print 'ret=',ret.text
-
+        return parseQuicksendxml(ret.text)
         
 def newSmslog1( phone,smscode):
             client = MongoClient(util.getMydbip())
@@ -47,7 +67,7 @@ def newSmslog1( phone,smscode):
                 ret = db['smslog'].update ({'phone':phone}, {"$set": { "smscode":smscode }})
                 print 'ret=',ret              
           
-            client.close()
+#            client.close()
 def querySmslog1(smscode):
             client = MongoClient(util.getMydbip())
 
@@ -55,11 +75,11 @@ def querySmslog1(smscode):
             ret = db['smslog'].find_one({'smscode':smscode})
             print 'ret=',ret
             if ret is not None:
-                client.close()
+#                client.close()
             
                 return ret['phone']
             else:
-                client.close()
+#                client.close()
                 None
 
 def newSmslogpass( phone,smscode):
@@ -74,7 +94,7 @@ def newSmslogpass( phone,smscode):
                 ret = db['smslogpass'].update ({'phone':phone}, {"$set": { "smscode":smscode }})
                 print 'ret=',ret              
           
-            client.close()
+#            client.close()
 def querySmslogpass(smscode):
             client = MongoClient(util.getMydbip())
 
@@ -82,11 +102,11 @@ def querySmslogpass(smscode):
             ret = db['smslogpass'].find_one({'smscode':smscode})
             print 'ret=',ret
             if ret is not None:
-                client.close()
+#                client.close()
             
                 return ret['phone']
             else:
-                client.close()
+#                client.close()
                 None
 def newSmslog(phone,smscode):
     smscodelog= Object.extend('smscodelog')
@@ -138,10 +158,12 @@ def requestPasswordResetBySmsCode():
                         print 'newsmscode',newsmscode
                         newSmslogpass(username,newsmscode)
                         print 'quicksend'
-                        quicksend(username, newsmscode)                        
+                        (code,msg) = quicksend(username, newsmscode)                        
 #                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
-                        return (jsonify({'status': "ok"}), 200)
-
+                        if code ==2:
+                            return (jsonify({'status': "ok"}), 200)
+                        else:    
+                            return (jsonify({'status': "ok",'code':code,'msg':msg}), 400)
                 except Exception,e:
                     print e
                     return (jsonify({'status': "fail"}), 400)
@@ -179,7 +201,12 @@ def MobilePhonelogin():
                         newsmscode = newSmscode()
                         print 'newsmscode',newsmscode
                         newSmslog1(username,newsmscode)
-                        quicksend(username,newsmscode)
+                        (code,msg)=quicksend(username,newsmscode)
+                        if code ==2:
+                            return (jsonify({'status': "ok"}), 200)
+                        else:    
+                            return (jsonify({'status': "ok",'code':code,'msg':msg}), 400)
+                        
 #                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
                         return (jsonify({'status': "ok"}), 200)
 
