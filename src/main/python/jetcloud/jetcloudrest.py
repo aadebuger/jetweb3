@@ -55,7 +55,7 @@ class HelloWorld(Resource):
         return {'hello': 'world'}
 
 api.add_resource(HelloWorld, '/')
-@app.route('/1.1/filesdirect/<path:filename>', methods=['POST'])
+@app.route('/1.1/files/<path:filename>', methods=['POST'])
 def save_upload(filename):
 
 #    file = request.files['file']
@@ -80,7 +80,7 @@ def save_upload(filename):
 #        abort(404, message="mimetype error")
 
 
-@app.route('/1.1/files/<path:filename>', methods=['POST'])
+@app.route('/1.1/filesform/<path:filename>', methods=['POST'])
 def save_uploadform(filename):
 
 #    file = request.files['file']
