@@ -593,7 +593,7 @@ def verifyMobilePhone(smscode):
             print e
  
 
- @app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['post'])
+@app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['post'])
 def updatePassword(todo_id):
      try:
             print 'todo_id1',todo_id
