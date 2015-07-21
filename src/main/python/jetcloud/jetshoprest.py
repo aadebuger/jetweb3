@@ -542,7 +542,7 @@ def updatePassword(todo_id):
 
 
             _SessionToken = request.headers.get('X-AVOSCloud-Session-Token')
-            print 'value=',value
+            print '_SessionToken value=',value
 
             print '_SessionToken=',_SessionToken
             user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
