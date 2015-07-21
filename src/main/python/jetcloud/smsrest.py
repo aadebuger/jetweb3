@@ -132,7 +132,7 @@ def requestPasswordResetBySmsCode():
                 print 'not None'
                 try:
 
-                        print 'build_smscode ok'
+                        print 'build_smscode ok1'
 #                        send push
                         newsmscode = newSmscode()
                         print 'newsmscode',newsmscode
