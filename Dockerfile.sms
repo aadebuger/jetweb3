@@ -8,6 +8,7 @@ FROM    aadebuger/pythonflask
 run pip install passlib
 run pip install leancloud-sdk
 #run pip install  Celery
+run pip install XML2Dict
 Add src/main/python/ /code
 EXPOSE 8888
 workdir /code
