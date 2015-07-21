@@ -532,7 +532,7 @@ def hairstylepost():
 @app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['post'])
 def updatePassword(todo_id):
      try:
-            print 'todo_id',todo_id
+            print 'todo_id1',todo_id
             paramdict = json.loads(request.data)
             print 'paramdict=',paramdict
 
