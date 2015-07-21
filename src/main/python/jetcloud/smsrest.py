@@ -137,6 +137,7 @@ def requestPasswordResetBySmsCode():
                         newsmscode = newSmscode()
                         print 'newsmscode',newsmscode
                         newSmslogpass(username,newsmscode)
+                        print 'quicksend'
                         quicksend(username, newsmscode)                        
 #                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
                         return (jsonify({'status': "ok"}), 200)
