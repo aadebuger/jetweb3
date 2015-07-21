@@ -174,11 +174,12 @@ def MobilePhonelogin():
                 print 'not None'
                 try:
 
-                        print 'build_smscode ok'
+                        print 'build_smscode ok1'
 #                        send push
                         newsmscode = newSmscode()
                         print 'newsmscode',newsmscode
                         newSmslog1(username,newsmscode)
+                        quicksend(username,newsmscode)
 #                        capp.send_task('smscloud.smstasks.sendsms', args=[username, newsmscode], kwargs={})
                         return (jsonify({'status': "ok"}), 200)
 
