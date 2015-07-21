@@ -539,11 +539,15 @@ def updatePassword(todo_id):
             old_password = paramdict.get('old_password')
             new_password= paramdict.get("new_password")
             print 'new_password',new_password
-            _SessionToken= paramdict.get('_SessionToken')
+
+
+            _SessionToken = request.headers.get('X-AVOSCloud-Session-Token')
+            print 'value=',value
+
             print '_SessionToken=',_SessionToken
             user = User.verify_auth_token(app.config['SECRET_KEY'],_SessionToken)
             print 'session user=',user
-            user= User.objects(pk=todo_id).first()
+#           user= User.objects(pk=todo_id).first()
             if user is None:
                return  (jsonify({'status': "fail"}), 400)   # existing user
             if user.verify_password(old_password):
