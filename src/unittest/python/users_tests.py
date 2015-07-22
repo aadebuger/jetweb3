@@ -71,8 +71,8 @@ class Test(unittest.TestCase):
         print 'Newusers2 rv=',rv
         print 'Newusers2 rv=',rv.data    
     def testLogin13906917736ok(self):
-        print 'Login 13906917736'
-        rv=self.app.get('/1.1/login?username=13906917736&&password=123456')
+        print 'Login 13906917736 right'
+        rv=self.app.get('/1.1/login?username=13906917736&&password=password2')
                 
         print 'news rv=',rv
         print 'news rv=',rv.data        
