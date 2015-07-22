@@ -29,7 +29,7 @@ from bson import json_util
 from json import JSONEncoder
 #import jetuser
 from jetuser import *
-from sqlalchemy.dialects.postgresql.base import OID
+#from sqlalchemy.dialects.postgresql.base import OID
 #from jetcloud.MongoAclResource import getUserAcl
 app = Flask(__name__)
 api = Api(app)
