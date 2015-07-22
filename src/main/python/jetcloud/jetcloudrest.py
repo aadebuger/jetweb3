@@ -440,9 +440,21 @@ def login():
                         user.generate_auth_token(app.config['SECRET_KEY'])
                         print 'new sessiontoken', user.sessionToken        
                         oid = str(user.id)
+                        user_json = user.to_json()
+                        print 'user_json=',user_json    
+                            
+                        user_dict = json.loads(user_json)
+                        print 'user_dict',user_dict
+                            
+                        user_dict['objectId']=oid 
+                        print 'test1'
+                        user_dict['sessionToken']=   user.sessionToken
+                        del  user_dict['password']
+                        del user_dict["_id"]
+                        print 'test2'
+                        return (jsonify(user_dict),200)
 
-
-                        return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
+#                        return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
                        return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
                 except Exception,e:
