@@ -26,8 +26,10 @@ from bson import ObjectId
 import base64
 import cStringIO
 from bson import json_util
+from json import JSONEncoder
 #import jetuser
 from jetuser import *
+from sqlalchemy.dialects.postgresql.base import OID
 #from jetcloud.MongoAclResource import getUserAcl
 app = Flask(__name__)
 api = Api(app)
@@ -36,6 +38,21 @@ app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
 parser = reqparse.RequestParser()
 parser.add_argument('title', type=str)
 
+class MongoEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, User):
+            return obj.to_dict()
+        return JSONEncoder.default(self, obj)
+class MyEncoder(json.JSONEncoder):
+    def encode_object(self, obj):
+        return { 'id':unicode(obj.id), 'other_property': obj.other_property }
+
+    def default(self, obj):
+        if hasattr(obj, '__iter__'):
+            return [ self.encode_object(x) for x in obj ]
+        else:
+            return self.encode_object(obj)
+          
 def allow_cross_domain(fun):
     @wraps(fun)
     def wrapper_fun(*args, **kwargs):
@@ -423,10 +440,21 @@ def login():
                         user.generate_auth_token(app.config['SECRET_KEY'])
                         print 'new sessiontoken', user.sessionToken        
                         oid = str(user.id)
-                        if user.obarberid is not None:
-                            return (jsonify({'obarberid':user.obarberid,'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)                        
-                        else:           
-                            return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
+      
+                        user_json = user.to_json()
+                        print 'user_json=',user_json    
+                            
+                        user_dict = json.loads(user_json)
+                        print 'user_dict',user_dict
+                            
+                        user_dict['objectId']=oid 
+                        print 'test1'
+                        user_dict['sessionToken']=   user.sessionToken
+                        del  user_dict['password']
+                        del user_dict["_id"]
+                        print 'test2'
+                        return (jsonify(user_dict),200)
+#                            return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
                        return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
                 except Exception,e:
