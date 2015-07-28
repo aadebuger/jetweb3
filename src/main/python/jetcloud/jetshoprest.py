@@ -424,7 +424,7 @@ def barberpost():
 #            X-AVOSCloud-Session-Token
             print 'request data',request.data
             print 'login request jon',request.json
-            ret = parseRequest("barber",request)
+            ret = parseRequest("test_database","barber",request)
             return ret
      except Exception,e:
             print e
@@ -445,7 +445,7 @@ def servicepost():
 #            X-AVOSCloud-Session-Token
             print 'request data',request.data
             print 'login request jon',request.json
-            ret = parseRequest("service",request)
+            ret = parseRequest("test_database","service",request)
             return ret
      except Exception,e:
             print e
@@ -460,7 +460,7 @@ def servicepostbyid(todo_id):
 @app.route('/1.1/classes/appointment', methods=['post'])
 def appointmentpost():
      try:
-            ret = parseRequest("appointment",request)
+            ret = parseRequest("test_database","appointment",request)
             return ret
      except Exception,e:
             print e
@@ -475,7 +475,7 @@ def appointmentpostbyid(todo_id):
 @app.route('/1.1/classes/suitpromotion', methods=['post'])
 def suitpromotionpost():
      try:
-            ret = parseRequest("suitpromotion",request)
+            ret = parseRequest("test_database","suitpromotion",request)
             return ret
      except Exception,e:
             print e
@@ -483,21 +483,21 @@ def suitpromotionpost():
 def suitpromotionpostbyid(todo_id):
      try:
             print 'todo_id',todo_id
-            ret = parseRequestbyid("suitpromotionpost",request,todo_id)
+            ret = parseRequestbyid("suitpromotion",request,todo_id)
             return ret
      except Exception,e:
             print e  
 @app.route('/1.1/classes/order', methods=['post'])
 def orderpost():
      try:
-            ret = parseRequest("order",request)
+            ret = parseRequest("test_database","order",request)
             return ret
      except Exception,e:
             print e          
 @app.route('/1.1/classes/shop', methods=['post'])
 def shoppost():
      try:
-            ret = parseRequest("shop",request)
+            ret = parseRequest("test_database","shop",request)
             return ret
      except Exception,e:
             print e   
@@ -524,7 +524,7 @@ def hairstylepostbyid(todo_id):
 @app.route('/1.1/classes/hairstyle', methods=['post'])
 def hairstylepost():
      try:
-            ret = parseRequest("hairstyle",request)
+            ret = parseRequest("test_database","hairstyle",request)
             return ret
      except Exception,e:
             print e  
@@ -532,7 +532,7 @@ def hairstylepost():
 @app.route('/1.1/classes/advertisement', methods=['post'])
 def advertisementpost():
      try:
-            ret = parseRequest("advertisement",request)
+            ret = parseRequest("test_database","advertisement",request)
             return ret
      except Exception,e:
             print e   
@@ -540,21 +540,21 @@ def advertisementpost():
 @app.route('/1.1/classes/coupon', methods=['post'])
 def couponpost():
      try:
-            ret = parseRequest("coupon",request)
+            ret = parseRequest("test_database","coupon",request)
             return ret
      except Exception,e:
             print e  
 @app.route('/1.1/classes/review', methods=['post'])
 def reviewpost():
      try:
-            ret = parseRequest("review",request)
+            ret = parseRequest("test_database","review",request)
             return ret
      except Exception,e:
             print e                   
 @app.route('/1.1/classes/_User', methods=['post'])
 def userpost():
      try:
-            ret = parseRequest("user",request)
+            ret = parseRequest("stylemaster","user",request)
             return ret
      except Exception,e:
             print e                     
