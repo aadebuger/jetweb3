@@ -692,6 +692,7 @@ class BarberList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="barber"
+        self.projectfields ={"tags":0}
 
 
 class Shop(MongoResource.MResource):
@@ -706,6 +707,7 @@ class ShopList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="shop"
+        self.projectfields ={"tags":0}
 
 class Hairstyle(MongoResource.MResource):
     def __init__(self):
@@ -1090,8 +1092,8 @@ def coreRoute():
 
 def yhRoute():
 
-#    api.add_resource(YhOrderList, '/1.1/classes/order')
-#    api.add_resource(YhOrder, '/1.1/classes/order/<string:todo_id>')
+    api.add_resource(YhOrderList, '/1.1/classes/yhorder')
+    api.add_resource(YhOrder, '/1.1/classes/yhorder/<string:todo_id>')
     api.add_resource(OrderList, '/1.1/classes/order')
     api.add_resource(Order, '/1.1/classes/order/<string:todo_id>')
 
