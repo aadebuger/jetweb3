@@ -216,7 +216,7 @@ def put_user(oid):
 #    return (jsonify({'username': user.username}), 201,
 #            {'Location': url_for('get_user', id=user.id, _external=True)})
 
-@app.route('/1.1/classes/_User', methods=['POST'])
+@app.route('/1.1/classesold/_User', methods=['POST'])
 def new_user():
      try:
             print 'new_user'
