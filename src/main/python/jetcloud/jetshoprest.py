@@ -528,7 +528,36 @@ def hairstylepost():
             return ret
      except Exception,e:
             print e  
-            
+
+@app.route('/1.1/classes/advertisement', methods=['post'])
+def advertisementpost():
+     try:
+            ret = parseRequest("advertisement",request)
+            return ret
+     except Exception,e:
+            print e   
+
+@app.route('/1.1/classes/coupon', methods=['post'])
+def couponpost():
+     try:
+            ret = parseRequest("coupon",request)
+            return ret
+     except Exception,e:
+            print e  
+@app.route('/1.1/classes/review', methods=['post'])
+def reviewpost():
+     try:
+            ret = parseRequest("review",request)
+            return ret
+     except Exception,e:
+            print e                   
+@app.route('/1.1/classes/_User', methods=['post'])
+def userpost():
+     try:
+            ret = parseRequest("user",request)
+            return ret
+     except Exception,e:
+            print e                     
 @app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['put'])
 def updatePassword(todo_id):
      try:
