@@ -18,9 +18,11 @@ from leancloud import Object,Query
 from pymongo import read_preferences
 import util
 import random
+import MongoResource
+import MongoAclResource
 app = Flask(__name__)
 api = Api(app)
-
+app.config['SECRET_KEY'] = 'i love beijing tianmen yeah'
 from celery import Celery
 import os 
 from encoder import XML2Dict
@@ -28,6 +30,7 @@ from decoder import Dict2XML
 
 
 import requests
+import json
 capp = Celery('smstasks', broker=os.environ.get('CELERY_BROKER_URL',"amqp://guest@1257.net"))
 
 
@@ -334,7 +337,60 @@ def resetPasswordBySmsCode(smscode):
 
      except Exception,e:
             print e 
+@app.route('/1.1/usersByMobilePhone', methods=['post'])
+def usersByMobilePhone():
+     try:
+            print 'login'
+            username = request.json.get('mobilePhoneNumber')
+            smscode = request.json.get('smsCode')
+            if username is None or smscode is None:
+                abort(400)    # missing arguments
+            print 'username=',username
+            print 'password=',smscode
+            retphone = querySmslogpass(smscode)
+            if retphone is not None and username==retphone:
+                
+                print 'ret mobilephone',retphone
+                user = User.objects.filter(username=retphone).first()
+                
+                if user is not None:
+                
+                        user.generate_auth_token(app.config['SECRET_KEY'])
+                        print 'new sessiontoken', user.sessionToken        
+                        oid = str(user.id)
+                        user_json = user.to_json()
+                        print 'user_json=',user_json    
                             
+                        user_dict = json.loads(user_json)
+                        print 'user_dict',user_dict
+                            
+                        user_dict['objectId']=oid 
+                        print 'test1'
+                        user_dict['sessionToken']=   user.sessionToken
+                        del  user_dict['password']
+                        del user_dict["_id"]
+                        print 'test2'
+                        return (jsonify(user_dict),200)
+                else:
+                    user = User(username=username)
+#                    user.hash_password(password)
+
+                    user.createdAt=MongoResource.getIso8601()
+                    user.updatedAt=MongoResource.getIso8601()   
+                    user.mobilePhoneVerified=True
+                    user.save()
+                    print 'user.id=',user.id
+                    user.generate_auth_token(app.config['SECRET_KEY'])
+                    print 'sessionToken',user.sessionToken
+                    user.save()
+                    oid = str(user.id)
+                    return jsonify({ "objectId":oid,'sessionToken':user.sessionToken,"createdAt":user.createdAt,"updatedAt":user.updatedAt})
+                               
+            else:
+                return (jsonify({'status': "fail"}), 400)            
+     except Exception,e:
+            print e
+                                       
 if __name__ == '__main__':
 
     connect('stylemaster',host=util.getMydbip(),read_preference=read_preferences.ReadPreference.PRIMARY)
