@@ -19,12 +19,12 @@ def getAcl(request):
         return {}
     aclcondition = {'obarberid': user.obarberid}
     return aclcondition
-def getResouce(documentname,request):
+def getResouce(database,documentname,request):
      
         print 'get'
         print 'message where=',request['where']
         client = MongoClient(util.getMydbip())
-        db = client.test_database
+        db = client.database
         print "list get=",request
         searchword = request.get('where', '')
         offset = int(request.get('offset', '0'))
@@ -142,7 +142,7 @@ def putResource(documentname,request,todo_id):
             print e
         return "111",201
     
-def parseRequest(documentname, request):
+def parseRequest(database,documentname, request):
         print request.data
         newdict = json.loads(request.data)
         print 'newdict=',newdict
@@ -151,7 +151,7 @@ def parseRequest(documentname, request):
             print 'method',method
         except Exception,e:
             method="POST"
-        httpResource = { 'GET': lambda: getResouce(documentname,newdict),
+        httpResource = { 'GET': lambda: getResouce(database,documentname,newdict),
             'POST': lambda: postResource(documentname,newdict),
           } 
         return httpResource[method]()
