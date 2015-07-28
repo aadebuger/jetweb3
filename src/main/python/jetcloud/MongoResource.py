@@ -205,6 +205,7 @@ class MResourceList(Resource):
 
         limit = int(request.args.get('limit', '0'))
         order= request.args.get('order', '')
+        count = request.args.get("count","0")
         
         
         
@@ -277,6 +278,8 @@ class MResourceList(Resource):
 #        print 'newsv=',newsv
         retdict={}
         retdict['results']=newsv
+        if count ==1:
+            retdict['count']=len(newsv)
 #        return json.dumps(newsv,default=json_util.default)        
         retstr= json.dumps(newsv,default=json_util.default)  
         newdict = json.loads(retstr)  
