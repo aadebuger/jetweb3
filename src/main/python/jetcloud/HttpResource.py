@@ -24,7 +24,7 @@ def getResouce(database,documentname,request):
         print 'get'
         print 'message where=',request['where']
         client = MongoClient(util.getMydbip())
-        db = client.database
+        db = client[database]
         print "list get=",request
         searchword = request.get('where', '')
         offset = int(request.get('offset', '0'))
