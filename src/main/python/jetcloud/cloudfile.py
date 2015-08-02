@@ -41,5 +41,18 @@ def uploadfile(key,data):
         return ret
     else:
         print(info) # error message in info
+def qiniuuploadfile(access_key1, secret_key1,bucket_name1,key,data):
+    q = qiniu.Auth(access_key, secret_key)
+#    key = 'hello'
+#    data = 'hello qiniu!'
+    token = q.upload_token(bucket_name1)
+    ret, info = qiniu.put_data(token, key, data)
+    if ret is not None:
+        print('All is OK')
+        print 'ret=',ret
+        print 'info=',info
+        return ret
+    else:
+        print(info) # error message in info
 if __name__ == '__main__':
     pass
