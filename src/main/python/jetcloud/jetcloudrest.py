@@ -907,6 +907,34 @@ class AppointmentList(MongoResource.MResourceList):
         self.documentname ="appointment" 
 
 
+class Barbermonthaccount(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="barber_month_account"
+class BarbermonthaccountList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="barber_month_account"
+
+class Shopmonthaccount(MongoResource.MResource):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="shop_month_account"
+class ShopmonthaccountList(MongoResource.MResourceList):
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self.documentname ="shop_month_account"
+             
+        
+        
 class Mycollection(MongoResource.MResource):
     def __init__(self):
         '''
@@ -1036,6 +1064,16 @@ api.add_resource(Service, '/1.1/classes/service/<string:todo_id>')
 
 api.add_resource(AppointmentList, '/1.1/classes/appointment')
 api.add_resource(Appointment, '/1.1/classes/appointment/<string:todo_id>')
+
+
+
+api.add_resource(BarbermonthaccountList, '/1.1/classes/barbermonthaccount')
+api.add_resource(Barbermonthaccount, '/1.1/classes/barbermonthaccount/<string:todo_id>')
+
+api.add_resource(ShopmonthaccountList, '/1.1/classes/shopmonthaccount')
+api.add_resource(Shopmonthaccount, '/1.1/classes/shopmonthaccount/<string:todo_id>')
+
+
 
 
 api.add_resource(MycollectionList, '/1.1/classes/collection')
