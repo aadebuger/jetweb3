@@ -721,7 +721,10 @@ class HairstyleList(MongoResource.MResourceList):
         Constructor
         '''
         self.documentname ="hairstyle"    
-
+    def after_save(self,objectid,action):
+        
+        print 'after_save hairstyle',objectid,action  
+        MongoResource.pushEvent("hairstyle",objectid,{}, "post")  
 class Order(MongoResource.MResource):
     def __init__(self):
         '''
