@@ -154,7 +154,7 @@ class MAclResourceList(MResourceList):
         order= request.args.get('order', '')
         
         
-        print 'self getacl',self.getacl
+        print 'MAclResourceList self getacl',self.getacl
         op = self.getacl(self.appsecretkey,request)
         print 'op=',op
         print 'searchword=',searchword
