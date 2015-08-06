@@ -127,8 +127,8 @@ def putResource(documentname,request,todo_id):
 
             updatedAt =MongoResource.getIso8601()
             request['updatedAt']=updatedAt
-            aclcondition = getAcl(request)
-            print 'aclcondition',aclcondition
+#            aclcondition = getAcl(request)
+#            print 'aclcondition',aclcondition
             if opword=='':
                 ret = db[documentname].update({'_id': ObjectId(todo_id)},{"$set":request})      
             else:
