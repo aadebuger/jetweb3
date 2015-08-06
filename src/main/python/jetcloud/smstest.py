@@ -55,8 +55,8 @@ def searchShop():
 #        r = requests.put(url,data=payload,headers={'content-type': 'application/json'})
 #        print 'r=',r.text                       
 if __name__ == '__main__':
-#             clientGet()
-             searchShop()
+             clientGet()
+#             searchShop()
 #             smscodeGet()
 #            smsCode();
 #            resetPasswordok();     
