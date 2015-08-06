@@ -35,7 +35,7 @@ def getObjectid(request,appsecretkey):
 
 def getUserAcl(request,appsecretkey):
     aclcondition = {}
-    user = getObjectid(appsecretkey,request)
+    user = getObjectid(request,appsecretkey)
     print 'user=',user
     if user is None:
         return {'userid': "none"}
@@ -44,7 +44,7 @@ def getUserAcl(request,appsecretkey):
                  
 def getBarberUserAcl(request,appsecretkey):
     aclcondition = {}
-    user = getObjectid(appsecretkey,request)
+    user = getObjectid(request,appsecretkey)
     print 'user=',user
     if user is None:
         return {'obrberid': {"$in": "none"}}
