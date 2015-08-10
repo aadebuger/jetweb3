@@ -1,5 +1,5 @@
 FROM    aadebuger/pythonflask
-Add src/main/python /code
+Add . /code1
 #run pip install pingpp
 #run pip install flask
 #run pip install pymongo
@@ -10,6 +10,6 @@ run pip install qiniu
 run pip install passlib
 run pip install pybuilder
 EXPOSE 5000
-workdir /code/
+workdir /code1/
 run pyb package
 #CMD ["python", "jetcloud/jetcloudrest.py"]
