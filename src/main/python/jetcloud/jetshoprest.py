@@ -307,6 +307,8 @@ def loginbypost():
                 try:
                     if user.verify_password(password):
                         print 'verify_password ok'
+                        user.generate_auth_token(app.config['SECRET_KEY'])
+                                    
                         oid = str(user.id)
                         if user.oshopid is not None:
                             return (jsonify({'oshopid':user.oshopid,'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
@@ -314,7 +316,7 @@ def loginbypost():
                         else:
                             return (jsonify({'sessionToken':user.sessionToken,'username': username,"createdAt":user.createdAt,"updatedAt":user.updatedAt,"objectId":oid,"mobilePhone":user.MobilePhoneNumber} ), 200)
                     else:
-                        return (jsonify({"code":210,"error":"The username and password mismatch."}), 200)
+                        return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
                 except Exception,e:
                     print e
                     return (jsonify({"code":210,"error":"The username and password mismatch."}), 400)
@@ -558,7 +560,7 @@ def userpost():
             return ret
      except Exception,e:
             print e                     
-@app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['put'])
+@app.route('/1.1/users/<string:todo_id>/updatePassword', methods=['post'])
 def updatePassword(todo_id):
      try:
             print 'todo_id',todo_id
