@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+'''
+Created on Aug 5, 2015
+
+@author: aadebuger
+'''
+import requests
+import json
+from  urllib  import unquote
+def hlquicksend(phone,smscode):
+    
+        payload = {'linkid':'','subcode':'','username':'zrxt','password':'password777','epid':'109430','phone':phone,'message':"您的验证码是：%s。请不要把验证码泄露给其他人。"%(smscode)}
+
+        ret =requests.get('http://114.255.71.158:8061',params=payload)
+        print 'ret=',ret.text
+        
+if __name__ == '__main__':
+     hlquicksend("13906917736","hello")
