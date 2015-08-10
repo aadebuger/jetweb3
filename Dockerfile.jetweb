@@ -8,6 +8,7 @@ Add src/main/python /code
 #run pip install passlib
 run pip install qiniu
 run pip install passlib
+run pip install pybuilder
 EXPOSE 5000
 workdir /code/
 run pyb package
