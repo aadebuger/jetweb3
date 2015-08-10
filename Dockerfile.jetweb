@@ -9,6 +9,7 @@ Add . /code1
 run pip install qiniu
 run pip install passlib
 run pip install pybuilder
+run pip install flake8
 EXPOSE 5000
 workdir /code1/
 run pyb package
