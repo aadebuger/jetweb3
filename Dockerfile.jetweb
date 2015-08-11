@@ -10,6 +10,7 @@ run pip install passlib
 run pip install pybuilder
 run pip install flake8
 add  build.py /code1
+run mkidr /code1/src/main
 add  src/main/ /code1/src/main
 EXPOSE 5000
 workdir /code1/
