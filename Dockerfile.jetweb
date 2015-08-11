@@ -9,7 +9,9 @@ run pip install qiniu
 run pip install passlib
 run pip install pybuilder
 run pip install flake8
-add  build.py /code1
+add  build.py /code1/
+
+run mkdir /code1/src
 run mkdir /code1/src/main
 add  src/main/ /code1/src/main
 EXPOSE 5000
