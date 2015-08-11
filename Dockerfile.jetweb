@@ -1,5 +1,4 @@
 FROM    aadebuger/pythonflask
-Add . /code1
 #run pip install pingpp
 #run pip install flask
 #run pip install pymongo
@@ -10,6 +9,8 @@ run pip install qiniu
 run pip install passlib
 run pip install pybuilder
 run pip install flake8
+add  build.py /code1
+add  src/main/ /code1/src/main
 EXPOSE 5000
 workdir /code1/
 run pyb package
