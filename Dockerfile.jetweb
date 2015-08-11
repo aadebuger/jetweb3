@@ -17,4 +17,6 @@ add  src/main/ /code1/src/main
 EXPOSE 5000
 workdir /code1/
 run pyb package
+workdir /code1/target/dist/jetweb-1.0.dev0/
+run python setup.py install
 #CMD ["python", "jetcloud/jetcloudrest.py"]
