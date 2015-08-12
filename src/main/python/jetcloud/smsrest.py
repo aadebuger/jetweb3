@@ -137,6 +137,12 @@ def querySmslog(smscode):
 
 
 
+class HelloWorld(Resource):
+    def get(self):
+        return {'hello': 'world'}
+
+api.add_resource(HelloWorld, '/')
+
 
 @app.route('/1.1/requestPasswordResetBySmsCode', methods=['post'])
 def requestPasswordResetBySmsCode():
