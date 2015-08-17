@@ -22,6 +22,7 @@ import time
 from pymongo import MongoClient
 import MongoResource
 import MongoAclResource
+import BarberResource
 from bson import ObjectId
 import base64
 import cStringIO
@@ -680,6 +681,28 @@ def cloudQuery():
             retstr= json.dumps(retdict,default=json_util.default) 
             return retstr        
 
+@app.route('/1.1/barberrequest', methods=['post'])
+def newbarberrequest():
+     try:
+            print 'newbarberrequest'
+            print 'newbarberrequest json=',request.json
+            paramdict = request.json
+
+                        
+            oshopid = paramdict.get('oshopid')
+            phonenum = paramdict.get('phonenum')
+            barbername = paramdict.get('barbername')            
+            if oshopid is None or phonenum  is None or barbername is None:
+                abort(400)    # missing arguments
+            print 'oshopid=',oshopid
+            ret = BarberResource.newBarber(oshopid, phonenum, barbername)
+            if ret:
+                return (jsonify({'phonenum': phonenum}), 200)
+            else:
+                return (jsonify({"code":210,"error":"exists"}), 400)
+     except Exception,e:
+            print e
+            
 class Barber(MongoResource.MResource):
     def __init__(self):
         '''
