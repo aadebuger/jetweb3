@@ -23,6 +23,7 @@ import time
 from pymongo import MongoClient
 import MongoResource
 import MongoAclResource
+import BarberResource
 from bson import ObjectId
 #import jetuser
 from jetuser import *
@@ -590,7 +591,21 @@ def updatePassword(todo_id):
      except Exception,e:
             print e  
     
-    
+
+@app.route('/1.1/barber/<string:todo_id>/reviewBarver', methods=['put'])
+def  reviewBaber(todo_id):
+     try:
+            print 'barberid ',todo_id
+            ret =BarberResource.reviewBarber(todo_id)
+            print 'reviewBarber ret',ret
+            if ret is None:
+                abort(400)
+            updatedAt= ret
+            return (jsonify({"updatedAt":updatedAt,"objectId":todo_id} ), 200)
+
+
+     except Exception,e:
+            print e   
     
 class Barber(MongoResource.MResource):
     def __init__(self):
