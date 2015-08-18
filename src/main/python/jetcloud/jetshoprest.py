@@ -592,7 +592,7 @@ def updatePassword(todo_id):
             print e  
     
 
-@app.route('/1.1/barber/<string:todo_id>/reviewBarver', methods=['put'])
+@app.route('/1.1/barber/<string:todo_id>/reviewBarber', methods=['put'])
 def  reviewBaber(todo_id):
      try:
             print 'barberid ',todo_id
