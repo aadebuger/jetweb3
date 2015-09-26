@@ -9,6 +9,7 @@ run pip install qiniu
 run pip install passlib
 run pip install pybuilder
 run pip install flake8
+run pip install xmlrunner
 add  build.py /code1/
 
 run mkdir /code1/src
