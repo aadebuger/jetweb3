@@ -9,7 +9,7 @@ import json
 from flask import Flask, request
 #from flask.ext.restful import reqparse, abort, Api, Resource
 from flask_restful import Resource, Api,abort
-from flask_restful.utils import cors
+#from flask_restful.utils import cors
 from pymongo import MongoClient
 from pymongo import collection
 #from pymongo import ReturnDocument
@@ -287,7 +287,7 @@ class MResourceList(Resource):
 #        client.close()
         return retdict
 
-    @cors.crossdomain(origin='*')
+#    @cors.crossdomain(origin='*')
     def get(self):
         print 'get'
  #       args = parser.parse_args()
@@ -396,7 +396,7 @@ class MResourceList(Resource):
         newdict = json.loads(retstr)  
 #        client.close()
         return retdict
-    @cors.crossdomain(origin='*')
+#    @cors.crossdomain(origin='*')
     def post(self):
         print "post=",request
         if not self.before_save():
@@ -440,7 +440,7 @@ class MResource(Resource):
         self.documentname =documentname
     def after_put(self,objectid,putjson,action):
         print 'after_put1',objectid,putjson,action
-    @cors.crossdomain(origin='*')
+#    @cors.crossdomain(origin='*')
     def get(self, todo_id):
         print 'MResource  get todo_id',todo_id
 #        client = MongoClient(util.getMydbip())
@@ -466,7 +466,7 @@ class MResource(Resource):
 
 #       client.close()
         return newdict
-    @cors.crossdomain(origin='*')
+#    @cors.crossdomain(origin='*')
     def delete(self, todo_id):
         print 'todo_id',todo_id
 #        abort_if_todo_doesnt_exist(todo_id)
@@ -494,7 +494,7 @@ class MResource(Resource):
                             if op =='Add':
                                 return ("$push",{key: value["objects"]})
             return None
-    @cors.crossdomain(origin='*')
+#    @cors.crossdomain(origin='*')
     def put(self, todo_id):
         print "put=",request
         print 'todo_id',todo_id
