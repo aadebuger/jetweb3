@@ -155,6 +155,20 @@ def parseRequest(database,documentname, request):
             'POST': lambda: postResource(documentname,newdict),
           } 
         return httpResource[method]()
+def parseRequestbydict(database,documentname, newdict):
+#        print request.data
+#        newdict = json.loads(request.data)
+        print 'newdict=',newdict
+        try:
+            method = newdict['_method']
+            print 'method',method
+        except Exception,e:
+            method="POST"
+        httpResource = { 'GET': lambda: getResouce(database,documentname,newdict),
+            'POST': lambda: postResource(documentname,newdict),
+          } 
+        return httpResource[method]()
+    
 def parseRequestbyid(documentname, request,oid):
         print request.data
         newdict = json.loads(request.data)
