@@ -144,7 +144,7 @@ def putResource(documentname,request,todo_id):
 
 
 def deleteResource(documentname,request,todo_id):
-        print "put=",request
+        print "delete=",request
         print 'todo_id',todo_id
         try:
 #            print "put request=",request.json
@@ -159,7 +159,7 @@ def deleteResource(documentname,request,todo_id):
 
             ret  = db[documentname].remove({'_id': ObjectId(todo_id)})   
 
-            return {"code":200};
+            return json.dumps({"code":200},default=json_util.default);
 #            return json.dumps(retdict)
         except Exception,e:
             print e
