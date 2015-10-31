@@ -141,8 +141,6 @@ def putResource(documentname,request,todo_id):
         except Exception,e:
             print e
         return "111",201
-
-
 def deleteResource(documentname,request,todo_id):
         print "delete=",request
         print 'todo_id',todo_id
