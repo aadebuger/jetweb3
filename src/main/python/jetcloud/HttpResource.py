@@ -141,7 +141,30 @@ def putResource(documentname,request,todo_id):
         except Exception,e:
             print e
         return "111",201
-    
+
+
+def deleteResource(documentname,request,todo_id):
+        print "put=",request
+        print 'todo_id',todo_id
+        try:
+#            print "put request=",request.json
+#            newtodo_id = request.json['id'];
+#            print "newtodo_id=",newtodo_id;
+            client = MongoClient(util.getMydbip())
+            try:
+                del request["id"];
+            except Exception,e:
+                    print e
+            db = client.test_database
+
+            ret  = db[documentname].remove({'_id': ObjectId(todo_id)})   
+
+            return {"code":200};
+#            return json.dumps(retdict)
+        except Exception,e:
+            print e
+        return "111",201
+        
 def parseRequest(database,documentname, request):
         print request.data
         newdict = json.loads(request.data)
@@ -153,6 +176,7 @@ def parseRequest(database,documentname, request):
             method="POST"
         httpResource = { 'GET': lambda: getResouce(database,documentname,newdict),
             'POST': lambda: postResource(documentname,newdict),
+ 
           } 
         return httpResource[method]()
 def parseRequestbydict(database,documentname, newdict):
@@ -166,6 +190,7 @@ def parseRequestbydict(database,documentname, newdict):
             method="POST"
         httpResource = { 'GET': lambda: getResouce(database,documentname,newdict),
             'POST': lambda: postResource(documentname,newdict),
+      
           } 
         return httpResource[method]()
     
@@ -178,6 +203,7 @@ def parseRequestbyid(documentname, request,oid):
 
         httpResource = { 'GET': lambda: getResouce(documentname,newdict),
             'PUT': lambda: putResource(documentname,newdict,oid),
+            'DELETE': lambda: deleteResource(documentname,newdict,oid), 
           } 
         return httpResource[method]()
 if __name__ == '__main__':
