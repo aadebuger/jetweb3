@@ -52,8 +52,13 @@ def parseQuicksendxml(xml):
         return (result['{http://106.ihuyi.cn/}code'],result['{http://106.ihuyi.cn/}msg'])
     
 def quicksend(phone,smscode):
-    
-        payload = {'method': 'Submit', 'account': 'cf_xingfaner','password':'1234567','mobile':phone,'content':"您的验证码是：%s。请不要把验证码泄露给其他人。"%(smscode)}
+
+        account= os.environ.get("user",'cf_xingfaner')
+        password = os.environ.get("password",'1234567')
+        
+#        payload = {'method': 'Submit', 'account': 'cf_xingfaner','password':'1234567','mobile':phone,'content':"您的验证码是：%s。请不要把验证码泄露给其他人。"%(smscode)}
+        payload = {'method': 'Submit', 'account': account,'password':password,'mobile':phone,'content':"您的验证码是：%s。请不要把验证码泄露给其他人。"%(smscode)}
+
 
         ret =requests.get('http://106.ihuyi.cn/webservice/sms.php',params=payload)
         print 'ret=',ret.text
