@@ -9,6 +9,7 @@ import requests
 import json
 from  urllib  import unquote
 #Content-Type: application/json
+from smsrest import quicksend
 
 def clientGet():
         url ="http://www.slowyou.com.cn:5010/1.1/requestMobilePhoneVerify"
@@ -53,9 +54,24 @@ def searchShop():
 #        payload = """{"mobilePhoneNumber":"13906917736","password":"password"}"""
 #        payload = json.dumps({"password":"437413"})
 #        r = requests.put(url,data=payload,headers={'content-type': 'application/json'})
-#        print 'r=',r.text                       
+#        print 'r=',r.text 
+def clientsmswebGet():
+        url ="http://www.slowyou.com.cn:5030/1.1/requestMobilePhoneVerify"
+        payload = """{"mobilePhoneNumber":"13906917736","password":"password"}"""
+        payload = json.dumps({"mobilePhoneNumber":"13906917736","password":"password"})
+        r = requests.post(url,data=payload,headers={'content-type': 'application/json'})
+        print 'r=',r.text    
+
+def smscodesmswebGet():
+        url ="http://www.slowyou.com.cn:5030/1.1/verifyMobilePhone/423542"
+        payload = """{"mobilePhoneNumber":"13906917736","password":"password"}"""
+        payload = json.dumps({"mobilePhoneNumber":"13906917736","password":"password"})
+        r = requests.post(url,data=payload,headers={'content-type': 'application/json'})
+        print 'r=',r.text         
 if __name__ == '__main__':
-             clientGet()
+#        smscodesmswebGet()
+         quicksend("13906917736","12345") 
+#             clientsmswebGet()
 #             searchShop()
 #             smscodeGet()
 #            smsCode();
