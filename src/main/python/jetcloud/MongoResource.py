@@ -29,6 +29,7 @@ from passlib.apps import custom_app_context as pwd_context
 #from passlib.utils import consteq
 from pymongo import read_preferences
 
+import restobject
 client1 = MongoClient(util.getMydbip())      
     
 
@@ -305,7 +306,7 @@ class MResourceList(Resource):
         
         
         
-        print 'searchword=',searchword
+        print 'searchword1=',searchword
         print 'offset=',offset
         print 'limit=',limit
         print 'order=',order
@@ -355,6 +356,8 @@ class MResourceList(Resource):
                      compaLocation(dict)
                      
              print 'new dict=',dict
+             restobject.rest2mongo(dict)
+             print 'new new dict=',dict
              sortlist=[]
              orderv = order.split(",")
              if order is not "":
