@@ -11,6 +11,7 @@ from bson.objectid import ObjectId
 import util
 import MongoResource
 import MongoAclResource
+import restobject
 
 def getAcl(request):
     aclcondition = {}
@@ -19,7 +20,11 @@ def getAcl(request):
         return {}
     aclcondition = {'obarberid': user.obarberid}
     return aclcondition
-def getResouce(database,documentname,request):
+
+
+
+
+def getResoucegroup(database,documentname,request):
      
         print 'get'
         print 'message where=',request['where']
@@ -80,6 +85,74 @@ def getResouce(database,documentname,request):
         return retstr 
 #        newdict = json.loads(retstr)  
 #        return retdict
+
+def getResouce(database,documentname,request):
+     
+        print 'get1'
+        print 'message where=',request['where']
+        client = MongoClient(util.getMydbip())
+        db = client[database]
+        print "list get=",request
+        searchword = request.get('where', '')
+        offset = int(request.get('offset', '0'))
+        limit = int(request.get('limit', '0'))
+        
+        
+        print 'searchword1=',searchword
+        print 'offset=',offset
+        print 'limit=',limit
+        
+        
+#        ret = db.news.find_one()
+        if searchword=='' or searchword=='{}':
+            print 'searchword=null'
+#sort({"createdAt":-1})            
+            try: 
+                    if limit==0:
+                        if offset ==0:
+                            ret = db[documentname].find().sort([('_id', -1)])
+                        else:
+                            ret = db[documentname].find().sort([('_id', -1)]).offset(offset);
+                    else:
+                        if offset == 0 :
+                            ret = db[documentname].find().sort([('_id', -1)]).limit(limit)
+                        else:
+                            ret = db[documentname].find().sort([('_id', -1)]).skip(offset).limit(limit)
+            except Exception,e:
+                    print e
+        else:
+             print 'searchword == dict'
+#             dict = json.loads(searchword)
+             dict = searchword
+             if dict.has_key("objectId"):
+                    oid = dict["objectId"]
+                    dict['_id']=ObjectId(oid)
+                    del dict["objectId"]
+             print 'documentname=',documentname
+             restobject.rest2mongo(dict)
+             print 'new new dict=',dict
+             
+             ret = db[documentname].find(dict)
+        newsv = [];
+        for news in ret:
+            print 'news=',news
+            print 'news get id',news.get("id")
+            if news.get("id")==None:
+                oid =  str(news["_id"])
+                del news["_id"]
+                news['id']=oid
+            newsv.append(news)
+        print 'newsv=',newsv
+        retdict={}
+        retdict['results']=newsv
+#        return json.dumps(newsv,default=json_util.default)        
+        retstr= json.dumps(retdict,default=json_util.default) 
+        return retstr 
+#        newdict = json.loads(retstr)  
+#        return retdict
+
+
+
 def postResource(documentname, request):
         print "post=",request
 #      if not self.before_save():
