@@ -9,7 +9,7 @@ import sys
 from flask import Flask
 from flask import abort,jsonify
 from flask_restful import reqparse,Resource, Api,request,url_for
-
+from flask_restful.utils import cors
 import json
 import cloudfile
 from mongoengine import * 
