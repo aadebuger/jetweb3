@@ -37,11 +37,25 @@ def fixupvalue(adict):
                         if typevalue=='Date':
                             print iso8601.parse_date(value1['iso'])
                             value[key1]=value1['iso']
+def fixupcreatedvalue(value):
+
+            for key1 in value:
+                    print 'key1=',key1
+                    value1= value[key1]
+                    print 'value1=',value1
+                    if value1.has_key('__type'):
+                        typevalue = value1['__type']
+                        if typevalue=='Date':
+                            print iso8601.parse_date(value1['iso'])
+                            value[key1]=value1['iso']
 
 def rest2mongo(restdict):
         for key in  restdict:
             print 'key=',key
-            if key== "$and":
+            if key=='createdAt':
+                value=restdict[key]
+                fixupcreatedvalue(value)
+            if key== "$and" or key== "$or":
                 value = restdict[key]
                 for item in value:
                     print 'item=',item
@@ -50,6 +64,8 @@ if __name__ == "__main__":
     print "restobject"
     jsonstr1="""{"status":1}"""
     jsonstr="""{"status": {"$gte": 0}, "$and": [{"createdAt": {"$gte": {"__type": "Date", "iso": "2015-11-01T16:00:00.000Z"}}}, {"createdAt": {"$lte": {"__type": "Date", "iso": "2015-11-14T16:00:00.000Z"}}}]}"""
+    jsonstr="""{"status": {"$gte": 0}, "createdAt": {"$gte": {"__type": "Date", "iso": "2015-11-01T16:00:00.000Z"},"$lte": {"__type": "Date", "iso": "2015-11-14T16:00:00.000Z"}}}"""
+
     dict = json.loads(jsonstr)
     print "dict=",dict
 #    fixup(dict,"aa","bb")
