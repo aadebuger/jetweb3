@@ -227,8 +227,13 @@ def deleteResource(documentname,request,todo_id):
             except Exception,e:
                     print e
             db = client.test_database
+            todov = todo_id.split(",")
+            for oid in todov:
 
-            ret  = db[documentname].remove({'_id': ObjectId(todo_id)})   
+                ret  = db[documentname].remove({'_id': ObjectId(oid)})   
+
+                print 'ret=',ret   
+ 
 
             return json.dumps({"code":200},default=json_util.default);
 #            return json.dumps(retdict)
