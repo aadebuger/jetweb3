@@ -193,7 +193,7 @@ class MResourceList(Resource):
         return True;
     def after_save(self,objectid,action):
         print 'after_save1',objectid,action
-    def get1(self):
+    def get(self):
         print 'get'
  #       args = parser.parse_args()
  #       print 'args=',args        
