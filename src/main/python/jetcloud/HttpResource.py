@@ -96,7 +96,7 @@ def getResouce(database,documentname,request):
         searchword = request.get('where', '')
         offset = int(request.get('offset', '0'))
         limit = int(request.get('limit', '0'))
-        order= request.args.get('order', '') 
+        order= request.get('order', '') 
         
         print 'searchword1=',searchword
         print 'offset=',offset
