@@ -139,7 +139,7 @@ def getResouce(database,documentname,request):
 ##            except Exception,e:
 ##                    print e
         else:
-             print 'searchword == dict'
+             print 'searchword1 == dict'
 #             dict = json.loads(searchword)
              dict = searchword
              if dict.has_key("objectId"):
@@ -150,6 +150,7 @@ def getResouce(database,documentname,request):
              restobject.rest2mongo(dict)
              print 'new new dict=',dict
              orderv = order.split(",")
+             sortlist=[]
              if order is not "":
                      print 'order sort'
                      for sortvalue in orderv:
