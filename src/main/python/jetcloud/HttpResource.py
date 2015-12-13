@@ -101,7 +101,7 @@ def getResouce(database,documentname,request):
         print 'searchword1=',searchword
         print 'offset=',offset
         print 'limit=',limit
-        
+        print 'order=',order
         
 #        ret = db.news.find_one()
         if searchword=='' or searchword=='{}':
