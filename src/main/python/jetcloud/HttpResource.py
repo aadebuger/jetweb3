@@ -96,7 +96,7 @@ def getResouce(database,documentname,request):
         searchword = request.get('where', '')
         offset = int(request.get('offset', '0'))
         limit = int(request.get('limit', '0'))
-        
+        order= request.args.get('order', '') 
         
         print 'searchword1=',searchword
         print 'offset=',offset
@@ -105,21 +105,39 @@ def getResouce(database,documentname,request):
         
 #        ret = db.news.find_one()
         if searchword=='' or searchword=='{}':
-            print 'searchword=null'
-#sort({"createdAt":-1})            
-            try: 
-                    if limit==0:
-                        if offset ==0:
-                            ret = db[documentname].find().sort([('_id', -1)])
+                print 'searchword=null'
+#sort({"createdAt":-1})      
+                orderv = order.split(",")
+                print 'orderv=',orderv
+                sortlist=[]
+                if order is not "":
+                     print 'order sort'
+                     for sortvalue in orderv:
+                    
+                        if sortvalue.startswith("-"):
+                            sortlist.append((sortvalue[1:],-1))
                         else:
-                            ret = db[documentname].find().sort([('_id', -1)]).offset(offset);
-                    else:
-                        if offset == 0 :
-                            ret = db[documentname].find().sort([('_id', -1)]).limit(limit)
-                        else:
-                            ret = db[documentname].find().sort([('_id', -1)]).skip(offset).limit(limit)
-            except Exception,e:
-                    print e
+                            sortlist.append((sortvalue,1))
+                                      
+                try: 
+                    ret= db[documentname].find({},skip=offset,limit=limit,sort=sortlist)
+                    
+                    
+                except Exception,e:
+                        print e      
+##            try: 
+##                    if limit==0:
+##                        if offset ==0:
+##                            ret = db[documentname].find().sort([('_id', -1)])
+##                        else:
+##                            ret = db[documentname].find().sort([('_id', -1)]).offset(offset);
+##                    else:
+##                        if offset == 0 :
+##                            ret = db[documentname].find().sort([('_id', -1)]).limit(limit)
+##                        else:
+##                            ret = db[documentname].find().sort([('_id', -1)]).skip(offset).limit(limit)
+##            except Exception,e:
+##                    print e
         else:
              print 'searchword == dict'
 #             dict = json.loads(searchword)
