@@ -149,8 +149,16 @@ def getResouce(database,documentname,request):
              print 'documentname=',documentname
              restobject.rest2mongo(dict)
              print 'new new dict=',dict
-             
-             ret = db[documentname].find(dict)
+             orderv = order.split(",")
+             if order is not "":
+                     print 'order sort'
+                     for sortvalue in orderv:
+                    
+                        if sortvalue.startswith("-"):
+                            sortlist.append((sortvalue[1:],-1))
+                        else:
+                            sortlist.append((sortvalue,1))       
+             ret = db[documentname].find(dict,sort=sortlist)
         newsv = [];
         for news in ret:
             print 'news=',news
