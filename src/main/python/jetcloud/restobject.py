@@ -28,19 +28,22 @@ def fixupvalue(adict):
             print 'key=',key
             value = adict[key]
             print 'value=',value
-            print type(value) is list
-            for key1 in value:
-                    print 'key1=',key1
-                    value1= value[key1]
-                    print 'value1=',value1
-                    try:
-                        if value1.has_key('__type'):
-                            typevalue = value1['__type']
-                            if typevalue=='Date':
-                                print iso8601.parse_date(value1['iso'])
-                                value[key1]=value1['iso']
-                    except Exception,e:
-                        print 'e=',e
+            try:
+                print type(value) is list
+                for key1 in value:
+                        print 'key1=',key1
+                        value1= value[key1]
+                        print 'value1=',value1
+                        try:
+                            if value1.has_key('__type'):
+                                typevalue = value1['__type']
+                                if typevalue=='Date':
+                                    print iso8601.parse_date(value1['iso'])
+                                    value[key1]=value1['iso']
+                        except Exception,e:
+                            print 'e=',e
+            except Exception,e:
+                print 'e=',e
 def fixupcreatedvalue(value):
 
             for key1 in value:
