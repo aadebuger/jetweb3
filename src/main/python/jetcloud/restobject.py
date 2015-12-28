@@ -5,6 +5,7 @@ Created on Nov 14, 2015
 """
 import json
 import iso8601
+import types
 def fixup(adict, k, v):
     for key in adict.keys():
         print 'key=',key
@@ -32,11 +33,14 @@ def fixupvalue(adict):
                     print 'key1=',key1
                     value1= value[key1]
                     print 'value1=',value1
-                    if value1.has_key('__type'):
-                        typevalue = value1['__type']
-                        if typevalue=='Date':
-                            print iso8601.parse_date(value1['iso'])
-                            value[key1]=value1['iso']
+                    try:
+                        if value1.has_key('__type'):
+                            typevalue = value1['__type']
+                            if typevalue=='Date':
+                                print iso8601.parse_date(value1['iso'])
+                                value[key1]=value1['iso']
+                    except Exception,e:
+                        print 'e=',e
 def fixupcreatedvalue(value):
 
             for key1 in value:
