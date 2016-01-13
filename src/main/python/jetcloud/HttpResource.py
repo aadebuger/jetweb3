@@ -120,7 +120,14 @@ def getResouce(database,documentname,request):
                             sortlist.append((sortvalue[1:],-1))
                         else:
                             sortlist.append((sortvalue,1))
-                                      
+
+                if count==1:
+                     ret = db[documentname].find(dict).count()
+                     retdict={}
+                     retdict['count']=ret
+                     retstr= json.dumps(retdict,default=json_util.default) 
+                     return retstr 
+                                                 
                 try: 
                     ret= db[documentname].find({},skip=offset,limit=limit,sort=sortlist)
                     
@@ -164,7 +171,7 @@ def getResouce(database,documentname,request):
              if count==1:
                  ret = db[documentname].find(dict).count()
                  retdict={}
-                 retdict['count']=count
+                 retdict['count']=ret
                  retstr= json.dumps(retdict,default=json_util.default) 
                  return retstr 
     
