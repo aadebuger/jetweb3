@@ -94,7 +94,7 @@ def getResouce(database,documentname,request):
         db = client[database]
         print "list get=",request
         searchword = request.get('where', '')
-        offset = int(request.get('offset', '0'))
+        offset = int(request.get('skip', '0'))
         limit = int(request.get('limit', '0'))
         order= request.get('order', '') 
         count = request.get("count","0")
