@@ -97,6 +97,8 @@ def getResouce(database,documentname,request):
         offset = int(request.get('offset', '0'))
         limit = int(request.get('limit', '0'))
         order= request.get('order', '') 
+        count = request.args.get("count","0")
+        
         
         print 'searchword1=',searchword
         print 'offset=',offset
@@ -159,7 +161,14 @@ def getResouce(database,documentname,request):
                             sortlist.append((sortvalue[1:],-1))
                         else:
                             sortlist.append((sortvalue,1))       
-             ret = db[documentname].find(dict,sort=sortlist)
+             if count==1:
+                 ret = db[documentname].find(dict).count()
+                 retdict={}
+                 retdict['count']=count
+                 retstr= json.dumps(retdict,default=json_util.default) 
+                 return retstr 
+    
+             ret = db[documentname].find(dict,skip=offset,limit=limit,sort=sortlist)
         newsv = [];
         for news in ret:
             print 'news=',news
@@ -172,6 +181,8 @@ def getResouce(database,documentname,request):
         print 'newsv=',newsv
         retdict={}
         retdict['results']=newsv
+            
+            
 #        return json.dumps(newsv,default=json_util.default)        
         retstr= json.dumps(retdict,default=json_util.default) 
         return retstr 
