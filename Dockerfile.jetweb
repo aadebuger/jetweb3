@@ -7,7 +7,7 @@ FROM    aadebuger/pythonflask
 #run pip install passlib
 run pip install qiniu
 run pip install passlib
-run pip install pybuilder
+run pip install pybuilder==0.10.63
 run pip install flake8
 run pip install xmlrunner
 add  build.py /code1/
