@@ -59,7 +59,7 @@ def fixupcreatedvalue(value):
 def rest2mongo(restdict):
         for key in  restdict:
             print 'key=',key
-            if key=='createdAt':
+            if key=='createdAt' or key =='fanlidate':
                 value=restdict[key]
                 fixupcreatedvalue(value)
             if key== "$and" or key== "$or":
