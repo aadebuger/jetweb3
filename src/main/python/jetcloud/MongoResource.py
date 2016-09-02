@@ -294,7 +294,7 @@ class MResourceList(Resource):
     #        print 'newsv=',newsv
             retdict={}
             retdict['results']=newsv
-            if count ==1:
+            if count =="1":
                 retdict['count']=len(newsv)
     #        return json.dumps(newsv,default=json_util.default)        
             retstr= json.dumps(newsv,default=json_util.default)  
