@@ -207,8 +207,8 @@ class MResourceList(Resource):
             offset = int(request.args.get('skip', '0'))
             limit = int(request.args.get('limit', '0'))
             order= request.args.get('order', '')
-            
-            
+            count = request.args.get("count","0")
+                    
             
             print 'searchword1=',searchword
             print 'offset=',offset
@@ -294,6 +294,8 @@ class MResourceList(Resource):
     #        print 'newsv=',newsv
             retdict={}
             retdict['results']=newsv
+            if count ==1:
+                retdict['count']=len(newsv)
     #        return json.dumps(newsv,default=json_util.default)        
             retstr= json.dumps(newsv,default=json_util.default)  
             newdict = json.loads(retstr)  
