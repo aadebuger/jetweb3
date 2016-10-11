@@ -39,6 +39,9 @@ class User(DynamicDocument):
     hairstyle = StringField()
     likehairstyle=StringField()
     
+    authData = DictField()
+    
+    
     def hash_password(self, password):
         self.password = pwd_context.encrypt(password)
         
@@ -89,6 +92,14 @@ class User(DynamicDocument):
         user.save()
 
         return user
-    
+    @staticmethod
+    def querybyauthData(service,openid):
+
+        
+        key= "authData_%s_%s"%(service,"openid")
+        user =User.objects(key=openid)        
+        
+        return user    
+
 if __name__ == '__main__':
     pass
