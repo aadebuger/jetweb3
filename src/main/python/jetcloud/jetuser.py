@@ -97,7 +97,7 @@ class User(DynamicDocument):
 
         
         key= "authData_%s_%s"%(service,"openid")
-        user =User.objects(key=openid).first()       
+        user =User.objects(authData_weixin_openid=openid).first()       
         
         return user    
 
