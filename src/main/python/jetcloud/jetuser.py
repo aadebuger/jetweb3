@@ -38,7 +38,10 @@ class User(DynamicDocument):
     imgurl=StringField()
     hairstyle = StringField()
     likehairstyle=StringField()
-    
+    cid=StringField()  
+    desc=StringField()
+    bindMobilePhoneNumber=StringField()
+    headImageUrl= StringField() 
     authData = DictField()
     
     
