@@ -289,7 +289,7 @@ class MResourceList(Resource):
                     del news["_id"]
     #                news['id']=oid
                     news['objectId']=oid
-                    print 'oid=',oid
+
                 newsv.append(news)
     #        print 'newsv=',newsv
             retdict={}
@@ -392,7 +392,7 @@ class MResourceList(Resource):
                 del news["_id"]
 #                news['id']=oid
                 news['objectId']=oid
-                print 'oid=',oid
+
             newsv.append(news)
 #        print 'newsv=',newsv
         retdict={}
