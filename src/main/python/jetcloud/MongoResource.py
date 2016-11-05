@@ -211,11 +211,11 @@ class MResourceList(Resource):
                     
             
             print 'searchword1=',searchword
-            print 'offset=',offset
-            print 'limit=',limit
-            print 'order=',order
+#            print 'offset=',offset
+#            print 'limit=',limit
+#            print 'order=',order
             
-            print 'self.projectfields=',self.projectfields
+#            print 'self.projectfields=',self.projectfields
             
     #        ret = db.news.find_one()
             if searchword=='' or searchword=='{}':
