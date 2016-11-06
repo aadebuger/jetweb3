@@ -95,9 +95,9 @@ def searchDocument(documentname,projectfields,query,offset, limit,order):
         
         
         
-        print 'offset=',offset
-        print 'limit=',limit
-        print 'order=',order
+#        print 'offset=',offset
+#        print 'limit=',limit
+#        print 'order=',order
         
         dict = {'tags':{'$in':query}}
            
@@ -210,7 +210,7 @@ class MResourceList(Resource):
             count = request.args.get("count","0")
                     
             
-            print 'searchword1=',searchword
+#            print 'searchword1=',searchword
 #            print 'offset=',offset
 #            print 'limit=',limit
 #            print 'order=',order
@@ -319,12 +319,12 @@ class MResourceList(Resource):
         
         
         
-        print 'searchword=',searchword
-        print 'offset=',offset
-        print 'limit=',limit
-        print 'order=',order
+#        print 'searchword=',searchword
+#        print 'offset=',offset
+#        print 'limit=',limit
+#        print 'order=',order
         
-        print 'self.projectfields=',self.projectfields
+#        print 'self.projectfields=',self.projectfields
         
 #        ret = db.news.find_one()
         if searchword=='' or searchword=='{}':
