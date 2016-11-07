@@ -201,7 +201,6 @@ class MResourceList(Resource):
     #        client = MongoClient(util.getMydbip())
             client = getMclient()
             db = client.test_database
-            print "list get=",request
             searchword = request.args.get('where', '')
     #        offset = int(request.args.get('offset', '0'))
             offset = int(request.args.get('skip', '0'))
@@ -222,7 +221,7 @@ class MResourceList(Resource):
                 print 'searchword=null'
     #sort({"createdAt":-1})       
                 orderv = order.split(",")
-                print 'orderv=',orderv
+
                 sortlist=[]
                 if order is not "":
                      print 'order sort'
@@ -342,7 +341,7 @@ class MResourceList(Resource):
                         else:
                             ret = db[self.documentname].find().skip(offset).limit(limit)
                     orderv = order.split(",")
-                    print 'orderv=',orderv
+
                     if order is not "":
                          print 'order sort'
                          for sortvalue in orderv:
