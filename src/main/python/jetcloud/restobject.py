@@ -8,7 +8,8 @@ import iso8601
 import types
 def fixup(adict, k, v):
     for key in adict.keys():
-        print 'key=',key
+
+        
         if key == k:
             
             adict[key] = v
@@ -16,24 +17,24 @@ def fixup(adict, k, v):
             fixup(adict[key], k, v)
 def fixupvalueold(adict, k, v):
     for key in adict.keys():
-        print 'key=',key
+
         value1 = adict[key]
-        print 'value=',value1
+
 #        print 'type',isinstance({},dict)
         print 'type=',type(value1) is dict
         if type(value1) is dict:
             print 'value=',value1
 def fixupvalue(adict):
         for key in adict:
-            print 'key=',key
+#            print 'key=',key
             value = adict[key]
-            print 'value=',value
+#            print 'value=',value
             try:
                 print type(value) is list
                 for key1 in value:
-                        print 'key1=',key1
+#                        print 'key1=',key1
                         value1= value[key1]
-                        print 'value1=',value1
+#                        print 'value1=',value1
                         try:
                             if value1.has_key('__type'):
                                 typevalue = value1['__type']
@@ -47,9 +48,9 @@ def fixupvalue(adict):
 def fixupcreatedvalue(value):
 
             for key1 in value:
-                    print 'key1=',key1
+#                    print 'key1=',key1
                     value1= value[key1]
-                    print 'value1=',value1
+#                    print 'value1=',value1
                     if value1.has_key('__type'):
                         typevalue = value1['__type']
                         if typevalue=='Date':
@@ -58,14 +59,14 @@ def fixupcreatedvalue(value):
 
 def rest2mongo(restdict):
         for key in  restdict:
-            print 'key=',key
+#            print 'key=',key
             if key=='createdAt' or key =='fanlidate':
                 value=restdict[key]
                 fixupcreatedvalue(value)
             if key== "$and" or key== "$or":
                 value = restdict[key]
                 for item in value:
-                    print 'item=',item
+#                    print 'item=',item
                     fixupvalue(item)
 if __name__ == "__main__":
     print "restobject"
