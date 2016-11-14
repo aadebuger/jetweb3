@@ -6,6 +6,7 @@ Created on Nov 14, 2015
 import json
 import iso8601
 import types
+from bson.objectid import ObjectId
 def fixup(adict, k, v):
     for key in adict.keys():
 
@@ -28,11 +29,16 @@ def fixupvalue(adict):
         for key in adict:
 #            print 'key=',key
             value = adict[key]
-#            print 'value=',value
-            try:
-                print type(value) is list
-                for key1 in value:
-#                        print 'key1=',key1
+            print 'value=',value
+            if key =='objectId':
+                    adict['_id']=ObjectId(adict['objectId'])
+                    del adict['objectId']
+                
+            else:
+                try:
+                    print type(value) is list
+                    for key1 in value:
+                        print 'key1=',key1
                         value1= value[key1]
 #                        print 'value1=',value1
                         try:
@@ -43,8 +49,8 @@ def fixupvalue(adict):
                                     value[key1]=value1['iso']
                         except Exception,e:
                             print 'e=',e
-            except Exception,e:
-                print 'e=',e
+                except Exception,e:
+                    print 'e=',e
 def fixupcreatedvalue(value):
 
             for key1 in value:
@@ -73,7 +79,8 @@ if __name__ == "__main__":
     jsonstr1="""{"status":1}"""
     jsonstr="""{"status": {"$gte": 0}, "$and": [{"createdAt": {"$gte": {"__type": "Date", "iso": "2015-11-01T16:00:00.000Z"}}}, {"createdAt": {"$lte": {"__type": "Date", "iso": "2015-11-14T16:00:00.000Z"}}}]}"""
     jsonstr="""{"status": {"$gte": 0}, "createdAt": {"$gte": {"__type": "Date", "iso": "2015-11-01T16:00:00.000Z"},"$lte": {"__type": "Date", "iso": "2015-11-14T16:00:00.000Z"}}}"""
-
+    jsonstr="""{"status": {"$gte": 0}, "createdAt": {"$gte": {"__type": "Date", "iso": "2015-11-01T16:00:00.000Z"},"$lte": {"__type": "Date", "iso": "2015-11-14T16:00:00.000Z"}}}"""
+    jsonstr="""{"$and":[{"objectId":"57e0dd1da22b9d0061248912"}]}"""
     dict = json.loads(jsonstr)
     print "dict=",dict
 #    fixup(dict,"aa","bb")
