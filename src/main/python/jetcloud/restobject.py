@@ -66,7 +66,7 @@ def fixupcreatedvalue(value):
 def rest2mongo(restdict):
         for key in  restdict:
 #            print 'key=',key
-            if key=='createdAt' or key =='fanlidate':
+            if key=='createdAt' or key =='fanlidate' or key =='updatedAt':
                 value=restdict[key]
                 fixupcreatedvalue(value)
             if key== "$and" or key== "$or":
@@ -81,6 +81,7 @@ if __name__ == "__main__":
     jsonstr="""{"status": {"$gte": 0}, "createdAt": {"$gte": {"__type": "Date", "iso": "2015-11-01T16:00:00.000Z"},"$lte": {"__type": "Date", "iso": "2015-11-14T16:00:00.000Z"}}}"""
     jsonstr="""{"status": {"$gte": 0}, "createdAt": {"$gte": {"__type": "Date", "iso": "2015-11-01T16:00:00.000Z"},"$lte": {"__type": "Date", "iso": "2015-11-14T16:00:00.000Z"}}}"""
     jsonstr="""{"$and":[{"objectId":"57e0dd1da22b9d0061248912"}]}"""
+    jsonstr="""{"mobilePhoneNumber":{"$exists":true},"updatedAt":{"$gte":{"__type":"Date","iso":"2016-11-14T07:17:55.000Z"}}}"""
     dict = json.loads(jsonstr)
     print "dict=",dict
 #    fixup(dict,"aa","bb")
