@@ -241,6 +241,7 @@ class MAclResourceList(MResourceList):
 
             timestr =getIso8601()
             request.json['createdAt']=timestr
+            request.json['updatedAt']=timestr
             op = getUserAcl(self.appsecretkey,request)
             print 'op=',op
             for (d,x) in op.items():
