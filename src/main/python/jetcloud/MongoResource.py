@@ -411,7 +411,7 @@ class MResourceList(Resource):
              return "111",404
         
         try:
-            print "post request=",request.json
+            print "20161116 post request=",request.json
 #            client = MongoClient(util.getMydbip())
             client = getMclient()
         
@@ -419,6 +419,8 @@ class MResourceList(Resource):
             timestr= time.strftime('%Y-%m-%d %H:%M:%S')
             timestr =getIso8601()
             request.json['createdAt']=timestr
+            request.json['updatedAt']=timestr
+            
             if request.json.has_key("location"):
                     print 'find location'
                     location = request.json['location']
