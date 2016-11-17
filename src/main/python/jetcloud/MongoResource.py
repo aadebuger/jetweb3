@@ -425,7 +425,7 @@ class MResourceList(Resource):
                     print 'find location'
                     location = request.json['location']
                     del location["__type"]
-                    
+            restobject.formatrest2mongo(request.json)
             ret = db[self.documentname].insert(request.json)      
             print str(ret)
             retdict = {"objectId":str(ret),'createdAt':timestr}
