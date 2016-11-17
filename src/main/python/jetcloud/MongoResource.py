@@ -418,14 +418,15 @@ class MResourceList(Resource):
             db = client.test_database
             timestr= time.strftime('%Y-%m-%d %H:%M:%S')
             timestr =getIso8601()
-            request.json['createdAt']=timestr
-            request.json['updatedAt']=timestr
+
             
             if request.json.has_key("location"):
                     print 'find location'
                     location = request.json['location']
                     del location["__type"]
             restobject.formatrest2mongo(request.json)
+            request.json['createdAt']=timestr
+            request.json['updatedAt']=timestr
             ret = db[self.documentname].insert(request.json)      
             print str(ret)
             retdict = {"objectId":str(ret),'createdAt':timestr}
