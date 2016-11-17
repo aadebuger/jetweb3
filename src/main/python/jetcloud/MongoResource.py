@@ -489,7 +489,7 @@ class MResource(Resource):
             ret  = db[self.documentname].remove({'_id': ObjectId(oid)})   
             print 'ret=',ret   
 #        client.close()  
-        return {"code":200};
+        return {""};
 
     def isOp(self,mydict):
             print 'mydict',mydict
