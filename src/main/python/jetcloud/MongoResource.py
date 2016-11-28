@@ -403,7 +403,22 @@ class MResourceList(Resource):
         newdict = json.loads(retstr)  
 #        client.close()
         return retdict
-
+    def isOp(self,mydict):
+            print 'mydict',mydict
+            myitemlist = mydict.items()
+            print 'myitemlist',myitemlist
+            if len(myitemlist)==1:
+                (key,value)= myitemlist[0]
+                print 'key',key
+                if isinstance(value, dict):
+                    print 'isinstance'
+                    if value.has_key("__op") and  value.has_key("objects"):
+                            
+                            op = value["__op"]
+                            print 'op=',op
+                            if op =='Add':
+                                return ("$push",{key: value["objects"]})
+            return None
 #    @cors.crossdomain(origin='*')
     def post(self):
         print "post=",request
@@ -425,6 +440,7 @@ class MResourceList(Resource):
                     location = request.json['location']
                     del location["__type"]
             restobject.formatrest2mongo(request.json)
+            restobject.formatpost2mongo(request.json)
             request.json['createdAt']=timestr
             request.json['updatedAt']=timestr
             ret = db[self.documentname].insert(request.json)      
