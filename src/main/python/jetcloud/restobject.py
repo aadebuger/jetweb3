@@ -91,7 +91,7 @@ def formatrest2mongo(restdict):
                     formatrest2mongo(value)
 def formatpost2mongo(restdict):
         for key in  restdict:
-                print 'key=',key
+                print 'post key=',key
 
                 value = restdict[key]
                 if isinstance(value, dict):
