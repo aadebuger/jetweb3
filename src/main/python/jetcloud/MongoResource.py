@@ -426,7 +426,7 @@ class MResourceList(Resource):
              return "111",404
         
         try:
-            print "20161116 post request=",request.json
+            print "20161128 post request=",request.json
 #            client = MongoClient(util.getMydbip())
             client = getMclient()
         
