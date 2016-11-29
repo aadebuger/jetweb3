@@ -207,7 +207,18 @@ class MResourceList(Resource):
             limit = int(request.args.get('limit', '0'))
             order= request.args.get('order', '')
             count = request.args.get("count","0")
-                    
+            keys=request.args.get("keys","")
+            projectv = {};
+            if keys is not "":
+                             keysv = keys.split(",")
+                             print 'keys split '
+                             for sortvalue in keysv:
+                            
+                                if sortvalue.startswith("-"):
+                                     projectv[sortvalue[1]]=0
+                                else:
+                                     projectv[sortvalue]=1
+            print("projectv=",projectv)                    
             
 #            print 'searchword1=',searchword
 #            print 'offset=',offset
@@ -233,7 +244,7 @@ class MResourceList(Resource):
                             sortlist.append((sortvalue,1))
                                       
                 try: 
-                    ret= db[self.documentname].find({},self.projectfields,skip=offset,limit=limit,sort=sortlist)
+                    ret= db[self.documentname].find({},projectv,skip=offset,limit=limit,sort=sortlist)
                     
                     
                 except Exception,e:
@@ -270,7 +281,7 @@ class MResourceList(Resource):
                         else:
                             sortlist.append((sortvalue,1))
                                       
-                 ret = db[self.documentname].find(dict,self.projectfields,skip=offset,limit=limit,sort=sortlist)
+                 ret = db[self.documentname].find(dict,projectv,skip=offset,limit=limit,sort=sortlist)
     #             orderv = order.split(",")
     #             print 'orderv=',orderv
     #             if order is not "":
