@@ -244,8 +244,10 @@ class MResourceList(Resource):
                             sortlist.append((sortvalue,1))
                                       
                 try: 
-                    ret= db[self.documentname].find({},projectv,skip=offset,limit=limit,sort=sortlist)
-                    
+                    if keys is not "":
+                        ret= db[self.documentname].find({},projectv,skip=offset,limit=limit,sort=sortlist)
+                    else:
+                        ret= db[self.documentname].find({},self.projectfields,skip=offset,limit=limit,sort=sortlist)
                     
                 except Exception,e:
                         print e
@@ -280,8 +282,11 @@ class MResourceList(Resource):
                             sortlist.append((sortvalue[1:],-1))
                         else:
                             sortlist.append((sortvalue,1))
-                                      
-                 ret = db[self.documentname].find(dict,projectv,skip=offset,limit=limit,sort=sortlist)
+                 if keys is not "":
+                               
+                     ret = db[self.documentname].find(dict,projectv,skip=offset,limit=limit,sort=sortlist)
+                 else:
+                     ret = db[self.documentname].find(dict,self.projectfields,skip=offset,limit=limit,sort=sortlist)
     #             orderv = order.split(",")
     #             print 'orderv=',orderv
     #             if order is not "":
