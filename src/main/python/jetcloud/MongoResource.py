@@ -315,8 +315,18 @@ class MResourceList(Resource):
         limit = int(request.args.get('limit', '0'))
         order= request.args.get('order', '')
         count = request.args.get("count","0")
-        
-        
+        keys=request.args.get("keys","")
+        projectv = {};
+        if keys is not "":
+                         keysv = keys.split(",")
+                         print 'keys split '
+                         for sortvalue in keysv:
+                        
+                            if sortvalue.startswith("-"):
+                                 projectv[sortvalue[1]]=0
+                            else:
+                                 projectv[sortvalue]=1
+        print("projectv=",projectv)
         
 #        print 'searchword=',searchword
 #        print 'offset=',offset
