@@ -521,7 +521,7 @@ class MResource(Resource):
                             op = value["__op"]
                             print 'op=',op
                             if op =='Add':
-                                return ("$push",{key: value["objects"]})
+                                return ("$push",{key: {"$each":value["objects"] } })
             return None
 #    @cors.crossdomain(origin='*')
     def put(self, todo_id):
