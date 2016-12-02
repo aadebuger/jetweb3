@@ -607,9 +607,9 @@ class MResource(Resource):
             
             else:
                 setdict['updatedAt']=getIso8601()
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$push":newdict,"$set":setdict }) 
+                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$push":pushdict,"$set":setdict }) 
                 print 'ret=',ret
-                retdict = {"id":todo_id,"updatedAt":updatedAt}
+                retdict = {"objectId":todo_id,"updatedAt":updatedAt}
                 self.after_put(todo_id,request.json,"put");
 
                             
