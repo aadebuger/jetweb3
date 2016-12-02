@@ -578,26 +578,41 @@ class MResource(Resource):
             updatedAt= time.strftime('%Y-%m-%d %H:%M:%S')
             updatedAt =getIso8601()
 
+
+
+            if 0:           
+                value = self.isOp(request.json)
+                print 'value=,',value
+                newdict = request.json
+                if value is not None:
+                    (opword,newdict)=value
+                    print 'opword',opword
+                    print 'newdict',newdict
+    #            newdict['updatedAt']=updatedAt
+                print 'newdict=',newdict
+                if opword=='':
+                    print 'test1'
+                    ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$set":newdict})      
+                else:
+                    
+                    ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{opword:newdict,"$set":{'updatedAt':getIso8601()} }) 
+                print 'ret=',ret
+                retdict = {"id":todo_id,"updatedAt":updatedAt}
+                self.after_put(todo_id,request.json,"put");
+
+            setdict,pushdict = restobject.formatput2mongo(request.json)
+            if len(pushdict)==0:
+                setdict['updatedAt']=getIso8601()
+                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$set":setdict})   
             
-            value = self.isOp(request.json)
-            print 'value=,',value
-            newdict = request.json
-            if value is not None:
-                (opword,newdict)=value
-                print 'opword',opword
-                print 'newdict',newdict
-#            newdict['updatedAt']=updatedAt
-            print 'newdict=',newdict
-            if opword=='':
-                print 'test1'
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$set":newdict})      
             else:
-                
-                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{opword:newdict,"$set":{'updatedAt':getIso8601()} }) 
-            print 'ret=',ret
-            retdict = {"id":todo_id,"updatedAt":updatedAt}
-            self.after_put(todo_id,request.json,"put");
-                
+                setdict['updatedAt']=getIso8601()
+                ret = db[self.documentname].update({'_id': ObjectId(todo_id)},{"$push":newdict,"$set":setdict }) 
+                print 'ret=',ret
+                retdict = {"id":todo_id,"updatedAt":updatedAt}
+                self.after_put(todo_id,request.json,"put");
+
+                            
 #            client.close()
             return retdict
 #            return json.dumps(retdict)
