@@ -311,6 +311,8 @@ class MResourceList(Resource):
             retdict['results']=newsv
             if count =="1":
                 retdict['count']=len(newsv)
+            else:
+                retdict['results']=newsv 
     #        return json.dumps(newsv,default=json_util.default)        
             retstr= json.dumps(newsv,default=json_util.default)  
             newdict = json.loads(retstr)  
