@@ -208,7 +208,7 @@ class MResourceList(Resource):
             order= request.args.get('order', '')
             count = request.args.get("count","0")
             keys=request.args.get("keys","")
-            if count!="1":
+            if count=="1":
 #      perhaps  bug   from 201612.09
                 offset=0
                 limit-0
@@ -318,8 +318,8 @@ class MResourceList(Resource):
             else:
                 retdict['results']=newsv 
     #        return json.dumps(newsv,default=json_util.default)        
-            retstr= json.dumps(newsv,default=json_util.default)  
-            newdict = json.loads(retstr)  
+#            retstr= json.dumps(newsv,default=json_util.default)  
+#            newdict = json.loads(retstr)  
     #        client.close()
             return retdict
     def get2(self):
