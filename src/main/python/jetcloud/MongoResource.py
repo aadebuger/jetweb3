@@ -208,6 +208,10 @@ class MResourceList(Resource):
             order= request.args.get('order', '')
             count = request.args.get("count","0")
             keys=request.args.get("keys","")
+            if count!="1":
+#      perhaps  bug   from 201612.09
+                offset=0
+                limit-0
             projectv = {};
             if keys is not "":
                              keysv = keys.split(",")
@@ -308,7 +312,7 @@ class MResourceList(Resource):
                 newsv.append(news)
     #        print 'newsv=',newsv
             retdict={}
-            retdict['results']=newsv
+#            retdict['results']=newsv
             if count =="1":
                 retdict['count']=len(newsv)
             else:
