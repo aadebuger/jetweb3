@@ -64,6 +64,16 @@ def fixupcreatedvalue(value):
                             print iso8601.parse_date(value1['iso'])
                             value[key1]=value1['iso']
 
+def formatisodate(key,value):
+                        if isinstance(value, dict):
+                                for keyitem in value:
+                                    value1 = value[keyitem]
+                                    if isinstance(value1, dict):
+                                        if value1.has_key('__type'):
+                                            typevalue = value1['__type']
+                                            if typevalue=='Date':
+                                                print iso8601.parse_date(value1['iso'])
+                                                value1['iso']=iso8601.parse_date(value1['iso'])
 def rest2mongo(restdict):
 
         for key in  restdict:
@@ -71,11 +81,14 @@ def rest2mongo(restdict):
             if key=='createdAt' or key =='fanlidate' or key =='updatedAt':
                 value=restdict[key]
                 fixupcreatedvalue(value)
-            if key== "$and" or key== "$or":
-                value = restdict[key]
-                for item in value:
+            else:
+                if key== "$and" or key== "$or":
+                    value = restdict[key]
+                    for item in value:
 #                    print 'item=',item
-                    fixupvalue(item)
+                        fixupvalue(item)
+                else:
+                    formatisodate(key,restdict[key])
 def formatrest2mongo(restdict):
         for key in  restdict:
             print 'key=',key
@@ -151,9 +164,12 @@ if __name__ == "__main__":
     jsonstr="""{"reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
     jsonstr="""{"test":"1","reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
     jsonstr="""{"reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
+    jsonstr="""{"trading_day": {"$lt": {"__type": "Date", "iso": "2015-11-10T23:10:00.000Z"}}}"""
     dict1 = json.loads(jsonstr)
     print "dict=",dict1
 #    fixup(dict,"aa","bb")
 #    formatpost2mongo(dict1)
-    ret=formatput2mongo(dict1)   
-    print(ret)
+#    ret=formatput2mongo(dict1)   
+    ret=rest2mongo(dict1)   
+     
+    print(dict1)
