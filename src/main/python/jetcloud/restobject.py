@@ -73,7 +73,9 @@ def formatisodate(key,value):
                                             typevalue = value1['__type']
                                             if typevalue=='Date':
                                                 print iso8601.parse_date(value1['iso'])
+                                                del value1['__type']
                                                 value1['iso']=iso8601.parse_date(value1['iso'])
+                                                value1['__type']="Date"
 def rest2mongo(restdict):
 
         for key in  restdict:
