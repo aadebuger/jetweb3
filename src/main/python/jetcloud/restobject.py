@@ -76,8 +76,10 @@ def formatisodate(key,value):
                                                 print iso8601.parse_date(value1['iso'])
                                                 del value1['__type']
 #                                                value1['iso']=iso8601.parse_date(value1['iso'])
-                                                value1['iso']= datetime.utcnow()
-                                                value1['__type']="Date"
+#                                                value1['__type']="Date"
+#                                                value1['iso']= datetime.utcnow()
+                                                value[keyitem]={'__type':"Date","iso":datetime.utcnow()}
+                                                
 def rest2mongo(restdict):
 
         for key in  restdict:
@@ -169,6 +171,9 @@ if __name__ == "__main__":
     jsonstr="""{"test":"1","reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
     jsonstr="""{"reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
     jsonstr="""{"trading_day": {"$lt": {"__type": "Date", "iso": "2015-11-10T23:10:00.000Z"}}}"""
+    
+    jsonstr="""{"trading_day": {"$lt": { "iso": "2015-11-10T23:10:00.000Z","__type": "Date"}}}"""
+    
     dict1 = json.loads(jsonstr)
     print "dict=",dict1
 #    fixup(dict,"aa","bb")
