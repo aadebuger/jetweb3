@@ -7,6 +7,7 @@ Created on Nov 14, 2015
 import json
 import iso8601
 import types
+from datetime import datetime
 from bson.objectid import ObjectId
 def fixup(adict, k, v):
     for key in adict.keys():
@@ -74,7 +75,8 @@ def formatisodate(key,value):
                                             if typevalue=='Date':
                                                 print iso8601.parse_date(value1['iso'])
                                                 del value1['__type']
-                                                value1['iso']=iso8601.parse_date(value1['iso'])
+#                                                value1['iso']=iso8601.parse_date(value1['iso'])
+                                                value1['iso']= datetime.utcnow()
                                                 value1['__type']="Date"
 def rest2mongo(restdict):
 
