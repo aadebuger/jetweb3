@@ -78,7 +78,7 @@ def formatisodate(key,value):
 #                                                value1['iso']=iso8601.parse_date(value1['iso'])
 #                                                value1['__type']="Date"
 #                                                value1['iso']= datetime.utcnow()
-                                                value[keyitem]={'__type':"Date","iso": iso8601.parse_date(value1['iso'])}
+                                                value[keyitem]={'__type':"Date","iso": value1['iso']}
                                                 
 def rest2mongo(restdict):
 
