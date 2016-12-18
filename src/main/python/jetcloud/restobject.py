@@ -170,6 +170,8 @@ def formatget2mongo(searchword):
                         value = searchword["objectId"]
                         if isinstance(value, dict):
                             formatgetsub(value)
+                            del searchword["objectId"]
+                            searchword['_id']=value
                         else:                    
                             searchword['_id']=ObjectId(value)
                             del searchword["objectId"]
@@ -189,7 +191,7 @@ if __name__ == "__main__":
     jsonstr="""{"trading_day": {"$lt": {"__type": "Date", "iso": "2015-11-10T23:10:00.000Z"}}}"""
     
     jsonstr="""{"trading_day": {"$lt": { "iso": "2015-11-10T23:10:00.000Z","__type": "Date"}}}"""
-    jsonstr="""{"objectId":{"$in":["57ed0144a0bb9f00279c262c",""57ed0144a0bb9f00279c262d"]}}"""
+    jsonstr="""{"objectId":{"$in":["57ed0144a0bb9f00279c262c","57ed0144a0bb9f00279c262d"]}}"""
     
 #{'views': {'amount': 1, '__op': 'Increment'}}    
     dict1 = json.loads(jsonstr)
