@@ -157,6 +157,22 @@ def isOp(self,mydict):
                                 return ("$push",{key: {"$each":value["objects"] } })
             return None
 
+def toObjectId(item):
+     return ObjectId(item)
+def formatgetsub(restdict):
+    for key in  restdict:
+        value = restdict[key]
+        if isinstance(value,list):
+                newvalue = map(lambda item:toObjectId(item),value)
+                restdict[key]=newvalue
+def formatget2mongo(searchword):
+    
+                        value = searchword["objectId"]
+                        if isinstance(value, dict):
+                            formatgetsub(value)
+                        else:                    
+                            searchword['_id']=ObjectId(value)
+                            del searchword["objectId"]
                                     
 if __name__ == "__main__":
     print "restobject"
@@ -173,12 +189,14 @@ if __name__ == "__main__":
     jsonstr="""{"trading_day": {"$lt": {"__type": "Date", "iso": "2015-11-10T23:10:00.000Z"}}}"""
     
     jsonstr="""{"trading_day": {"$lt": { "iso": "2015-11-10T23:10:00.000Z","__type": "Date"}}}"""
+    jsonstr="""{"objectId":{"$in":["57ed0144a0bb9f00279c262c",""57ed0144a0bb9f00279c262d"]}}"""
     
+#{'views': {'amount': 1, '__op': 'Increment'}}    
     dict1 = json.loads(jsonstr)
     print "dict=",dict1
 #    fixup(dict,"aa","bb")
 #    formatpost2mongo(dict1)
 #    ret=formatput2mongo(dict1)   
-    ret=rest2mongo(dict1)   
+    ret=formatget2mongo(dict1)   
      
     print(dict1)
