@@ -258,9 +258,10 @@ class MResourceList(Resource):
             else:
                  dict = json.loads(searchword)
                  if dict.has_key("objectId"):
-                        oid = dict["objectId"]
-                        dict['_id']=ObjectId(oid)
-                        del dict["objectId"]
+#                        oid = dict["objectId"]
+#                        dict['_id']=ObjectId(oid)
+#                        del dict["objectId"]
+                     restobject.formatget2mongo(dict)
                  if dict.has_key("location"):
                          print 'location=',dict['location']
     #                     mylocation = dict['location']
