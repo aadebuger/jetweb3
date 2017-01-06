@@ -117,16 +117,17 @@ def formatpost2mongo(restdict):
 
                 value = restdict[key]
                 if isinstance(value, dict):
-                    print("dict")
+                    print("post2 dict")
                     if value.has_key("__op"):
                         opvalue = value["__op"]
                         if opvalue=='Add':
-                            
+                            print("formatobjects")
                             newvalue=formatobjects(value['objects'])
                             
                             restdict[key]=newvalue
 
 def processDate(item):
+            print("processDate")
             if isinstance(item, dict):
                                         if item.has_key('__type'):
                                             typevalue = item['__type']
