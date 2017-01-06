@@ -367,12 +367,12 @@ class MResourceList(Resource):
                         if offset ==0:
                             ret = db[self.documentname].find({},self.projectfields)
                         else:
-                            ret = db[self.documentname].find().offset(offset);
+                            ret = db[self.documentname].find({},self.projectfields).offset(offset);
                     else:
                         if offset == 0 :
-                            ret = db[self.documentname].find().limit(limit)
+                            ret = db[self.documentname].find({},self.projectfields).limit(limit)
                         else:
-                            ret = db[self.documentname].find().skip(offset).limit(limit)
+                            ret = db[self.documentname].find({},self.projectfields).skip(offset).limit(limit)
                     orderv = order.split(",")
 
                     if order is not "":
