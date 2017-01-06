@@ -66,6 +66,8 @@ def fixupcreatedvalue(value):
                             value[key1]=value1['iso']
 
 def formatisodate(key,value):
+                        print("formatisodate")
+                        print(key,value)
                         if isinstance(value, dict):
                                 for keyitem in value:
                                     value1 = value[keyitem]
@@ -78,6 +80,7 @@ def formatisodate(key,value):
 #                                                value1['iso']=iso8601.parse_date(value1['iso'])
 #                                                value1['__type']="Date"
 #                                                value1['iso']= datetime.utcnow()
+                                                print("keyitem",keyitem)
                                                 value[keyitem]={'__type':"Date","iso": value1['iso']}
                                                 
 def rest2mongo(restdict):
@@ -119,9 +122,22 @@ def formatpost2mongo(restdict):
                         opvalue = value["__op"]
                         if opvalue=='Add':
                             
-                            newvalue=value['objects']
+                            newvalue=formatobjects(value['objects'])
                             
                             restdict[key]=newvalue
+
+def processDate(item):
+            if isinstance(item, dict):
+                                        if item.has_key('__type'):
+                                            typevalue = item['__type']
+                                            if typevalue=='Date':
+                                                print iso8601.parse_date(item['iso'])
+
+                                                return {'__type':"Date","iso": item['iso']}
+            return item
+def formatobjects(objects):
+     newobjs = map(lambda item:processDate(item),objects)
+     return newobjs
 def formatput2mongo(restdict):
         setdict={};
         pushdict={}
@@ -188,10 +204,13 @@ if __name__ == "__main__":
     jsonstr="""{"reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
     jsonstr="""{"test":"1","reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
     jsonstr="""{"reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
-    jsonstr="""{"trading_day": {"$lt": {"__type": "Date", "iso": "2015-11-10T23:10:00.000Z"}}}"""
+
     
     jsonstr="""{"trading_day": {"$lt": { "iso": "2015-11-10T23:10:00.000Z","__type": "Date"}}}"""
     jsonstr="""{"objectId":{"$in":["57ed0144a0bb9f00279c262c","57ed0144a0bb9f00279c262d"]}}"""
+    jsonstr="""{"trading_day": {"$lt": {"__type": "Date", "iso": "2015-11-10T23:10:00.000Z"}}}"""    
+    jsonstr="""{"reminders":  { "iso": "2015-11-10T23:10:00.000Z","__type": "Date"}}"""
+    jsonstr="""{"reminders": {"objects": [{"iso": "2015-11-10T23:10:00.000Z", "__type": "Date"}], "__op": "Add"}}"""
     
 #{'views': {'amount': 1, '__op': 'Increment'}}    
     dict1 = json.loads(jsonstr)
@@ -199,6 +218,6 @@ if __name__ == "__main__":
 #    fixup(dict,"aa","bb")
 #    formatpost2mongo(dict1)
 #    ret=formatput2mongo(dict1)   
-    ret=formatget2mongo(dict1)   
+    ret=rest2mongo(dict1)   
      
     print(dict1)
