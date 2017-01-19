@@ -284,9 +284,15 @@ class MResourceList(Resource):
                      for sortvalue in orderv:
                     
                         if sortvalue.startswith("-"):
-                            sortlist.append((sortvalue[1:],-1))
+                            if sortvalue=='-updateAt':
+                                sortlist.append(('updatedAt',-1))
+                            else:
+                                sortlist.append((sortvalue[1:],-1))
                         else:
-                            sortlist.append((sortvalue,1))
+                            if sortvalue=='-updateAt':
+                                sortlist.append(("updatedAt",1))
+                            else:
+                                sortlist.append((sortvalue,1))
                  if keys is not "":
                                
                      ret = db[self.documentname].find(dict,projectv,skip=offset,limit=limit,sort=sortlist)
