@@ -285,12 +285,12 @@ class MResourceList(Resource):
                     
                         if sortvalue.startswith("-"):
                             if sortvalue=='-updateAt':
-                                sortlist.append(('updatedAt',-1))
+                                sortlist.append(('createdAt',-1))
                             else:
                                 sortlist.append((sortvalue[1:],-1))
                         else:
                             if sortvalue=='-updateAt':
-                                sortlist.append(("updatedAt",1))
+                                sortlist.append(("createdAt",1))
                             else:
                                 sortlist.append((sortvalue,1))
                  if keys is not "":
