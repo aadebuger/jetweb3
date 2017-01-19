@@ -212,7 +212,10 @@ if __name__ == "__main__":
     jsonstr="""{"trading_day": {"$lt": {"__type": "Date", "iso": "2015-11-10T23:10:00.000Z"}}}"""    
     jsonstr="""{"reminders":  { "iso": "2015-11-10T23:10:00.000Z","__type": "Date"}}"""
     jsonstr="""{"reminders": {"objects": [{"iso": "2015-11-10T23:10:00.000Z", "__type": "Date"}], "__op": "Add"}}"""
-    
+
+    jsonstr="""{"$and":[{"status":"6"},{"categories":"投顾观点"},{"user_object_id":"5833e5cc54ca760008a35c9e"}]}"""
+#{"$and":[{"begin_time":{"$gte":{"__type":"Date","iso":"2017-01-05T05:29:29.000Z"}}},{"begin_time":{"$lte":{"__type":"Date","iso":"2017-01-05T05:49:29.000Z"}}}]}
+    jsonstr="""{"categories":{"$regex":".*投顾观点.*"},"status":"6","user_object_id":"5833e5cc54ca760008a35c9e"}"""
 #{'views': {'amount': 1, '__op': 'Increment'}}    
     dict1 = json.loads(jsonstr)
     print "dict=",dict1
