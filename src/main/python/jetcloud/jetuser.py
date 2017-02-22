@@ -76,9 +76,10 @@ class User(DynamicDocument):
         s = Serializer(secret_key)
         try:
             data = s.loads(token)
-        except SignatureExpired:
+        except SignatureExpired, e:
             print 'none1'
-            return None    # valid token, but expired
+            #return None    # valid token, but expired
+            data = e.payload;
         except BadSignature:
             print 'none2'
             return None    # invalid token
