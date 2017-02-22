@@ -7,6 +7,7 @@ Created on Nov 14, 2015
 import json
 import iso8601
 import types
+from datetime import datetime
 from bson.objectid import ObjectId
 def fixup(adict, k, v):
     for key in adict.keys():
@@ -64,6 +65,24 @@ def fixupcreatedvalue(value):
                             print iso8601.parse_date(value1['iso'])
                             value[key1]=value1['iso']
 
+def formatisodate(key,value):
+                        print("formatisodate")
+                        print(key,value)
+                        if isinstance(value, dict):
+                                for keyitem in value:
+                                    value1 = value[keyitem]
+                                    if isinstance(value1, dict):
+                                        if value1.has_key('__type'):
+                                            typevalue = value1['__type']
+                                            if typevalue=='Date':
+                                                print iso8601.parse_date(value1['iso'])
+                                                del value1['__type']
+#                                                value1['iso']=iso8601.parse_date(value1['iso'])
+#                                                value1['__type']="Date"
+#                                                value1['iso']= datetime.utcnow()
+                                                print("keyitem",keyitem)
+                                                value[keyitem]={'__type':"Date","iso": value1['iso']}
+                                                
 def rest2mongo(restdict):
 
         for key in  restdict:
@@ -71,11 +90,14 @@ def rest2mongo(restdict):
             if key=='createdAt' or key =='fanlidate' or key =='updatedAt':
                 value=restdict[key]
                 fixupcreatedvalue(value)
-            if key== "$and" or key== "$or":
-                value = restdict[key]
-                for item in value:
+            else:
+                if key== "$and" or key== "$or":
+                    value = restdict[key]
+                    for item in value:
 #                    print 'item=',item
-                    fixupvalue(item)
+                        fixupvalue(item)
+                else:
+                    formatisodate(key,restdict[key])
 def formatrest2mongo(restdict):
         for key in  restdict:
             print 'key=',key
@@ -95,14 +117,28 @@ def formatpost2mongo(restdict):
 
                 value = restdict[key]
                 if isinstance(value, dict):
-                    print("dict")
+                    print("post2 dict")
                     if value.has_key("__op"):
                         opvalue = value["__op"]
                         if opvalue=='Add':
-                            
-                            newvalue=value['objects']
+                            print("formatobjects")
+                            newvalue=formatobjects(value['objects'])
                             
                             restdict[key]=newvalue
+
+def processDate(item):
+            print("processDate")
+            if isinstance(item, dict):
+                                        if item.has_key('__type'):
+                                            typevalue = item['__type']
+                                            if typevalue=='Date':
+                                                print iso8601.parse_date(item['iso'])
+
+                                                return {'__type':"Date","iso": item['iso']}
+            return item
+def formatobjects(objects):
+     newobjs = map(lambda item:processDate(item),objects)
+     return newobjs
 def formatput2mongo(restdict):
         setdict={};
         pushdict={}
@@ -138,6 +174,24 @@ def isOp(self,mydict):
                                 return ("$push",{key: {"$each":value["objects"] } })
             return None
 
+def toObjectId(item):
+     return ObjectId(item)
+def formatgetsub(restdict):
+    for key in  restdict:
+        value = restdict[key]
+        if isinstance(value,list):
+                newvalue = map(lambda item:toObjectId(item),value)
+                restdict[key]=newvalue
+def formatget2mongo(searchword):
+    
+                        value = searchword["objectId"]
+                        if isinstance(value, dict):
+                            formatgetsub(value)
+                            del searchword["objectId"]
+                            searchword['_id']=value
+                        else:                    
+                            searchword['_id']=ObjectId(value)
+                            del searchword["objectId"]
                                     
 if __name__ == "__main__":
     print "restobject"
@@ -151,9 +205,23 @@ if __name__ == "__main__":
     jsonstr="""{"reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
     jsonstr="""{"test":"1","reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
     jsonstr="""{"reminder": {"objects": ["1", "2"], "__op": "Add"}}"""
+
+    
+    jsonstr="""{"trading_day": {"$lt": { "iso": "2015-11-10T23:10:00.000Z","__type": "Date"}}}"""
+    jsonstr="""{"objectId":{"$in":["57ed0144a0bb9f00279c262c","57ed0144a0bb9f00279c262d"]}}"""
+    jsonstr="""{"trading_day": {"$lt": {"__type": "Date", "iso": "2015-11-10T23:10:00.000Z"}}}"""    
+    jsonstr="""{"reminders":  { "iso": "2015-11-10T23:10:00.000Z","__type": "Date"}}"""
+    jsonstr="""{"reminders": {"objects": [{"iso": "2015-11-10T23:10:00.000Z", "__type": "Date"}], "__op": "Add"}}"""
+
+    jsonstr="""{"$and":[{"status":"6"},{"categories":"投顾观点"},{"user_object_id":"5833e5cc54ca760008a35c9e"}]}"""
+#{"$and":[{"begin_time":{"$gte":{"__type":"Date","iso":"2017-01-05T05:29:29.000Z"}}},{"begin_time":{"$lte":{"__type":"Date","iso":"2017-01-05T05:49:29.000Z"}}}]}
+    jsonstr="""{"categories":{"$regex":".*投顾观点.*"},"status":"6","user_object_id":"5833e5cc54ca760008a35c9e"}"""
+#{'views': {'amount': 1, '__op': 'Increment'}}    
     dict1 = json.loads(jsonstr)
     print "dict=",dict1
 #    fixup(dict,"aa","bb")
 #    formatpost2mongo(dict1)
-    ret=formatput2mongo(dict1)   
-    print(ret)
+#    ret=formatput2mongo(dict1)   
+    ret=rest2mongo(dict1)   
+     
+    print(dict1)

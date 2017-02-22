@@ -208,6 +208,10 @@ class MResourceList(Resource):
             order= request.args.get('order', '')
             count = request.args.get("count","0")
             keys=request.args.get("keys","")
+            if count=="1":
+#      perhaps  bug   from 201612.09
+                offset=0
+                limit-0
             projectv = {};
             if keys is not "":
                              keysv = keys.split(",")
@@ -254,9 +258,10 @@ class MResourceList(Resource):
             else:
                  dict = json.loads(searchword)
                  if dict.has_key("objectId"):
-                        oid = dict["objectId"]
-                        dict['_id']=ObjectId(oid)
-                        del dict["objectId"]
+#                        oid = dict["objectId"]
+#                        dict['_id']=ObjectId(oid)
+#                        del dict["objectId"]
+                     restobject.formatget2mongo(dict)
                  if dict.has_key("location"):
                          print 'location=',dict['location']
     #                     mylocation = dict['location']
@@ -279,9 +284,15 @@ class MResourceList(Resource):
                      for sortvalue in orderv:
                     
                         if sortvalue.startswith("-"):
-                            sortlist.append((sortvalue[1:],-1))
+                            if sortvalue=='-updateAt':
+                                sortlist.append(('createdAt',-1))
+                            else:
+                                sortlist.append((sortvalue[1:],-1))
                         else:
-                            sortlist.append((sortvalue,1))
+                            if sortvalue=='-updateAt':
+                                sortlist.append(("createdAt",1))
+                            else:
+                                sortlist.append((sortvalue,1))
                  if keys is not "":
                                
                      ret = db[self.documentname].find(dict,projectv,skip=offset,limit=limit,sort=sortlist)
@@ -308,12 +319,14 @@ class MResourceList(Resource):
                 newsv.append(news)
     #        print 'newsv=',newsv
             retdict={}
-            retdict['results']=newsv
+#            retdict['results']=newsv
             if count =="1":
                 retdict['count']=len(newsv)
+            else:
+                retdict['results']=newsv 
     #        return json.dumps(newsv,default=json_util.default)        
-            retstr= json.dumps(newsv,default=json_util.default)  
-            newdict = json.loads(retstr)  
+#            retstr= json.dumps(newsv,default=json_util.default)  
+#            newdict = json.loads(retstr)  
     #        client.close()
             return retdict
     def get2(self):
@@ -360,12 +373,12 @@ class MResourceList(Resource):
                         if offset ==0:
                             ret = db[self.documentname].find({},self.projectfields)
                         else:
-                            ret = db[self.documentname].find().offset(offset);
+                            ret = db[self.documentname].find({},self.projectfields).offset(offset);
                     else:
                         if offset == 0 :
-                            ret = db[self.documentname].find().limit(limit)
+                            ret = db[self.documentname].find({},self.projectfields).limit(limit)
                         else:
-                            ret = db[self.documentname].find().skip(offset).limit(limit)
+                            ret = db[self.documentname].find({},self.projectfields).skip(offset).limit(limit)
                     orderv = order.split(",")
 
                     if order is not "":

@@ -43,6 +43,7 @@ class User(DynamicDocument):
     bindMobilePhoneNumber=StringField()
     headImageUrl= StringField() 
     authData = DictField()
+    phoneSystem=StringField()
     
     
     def hash_password(self, password):
