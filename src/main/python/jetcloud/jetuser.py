@@ -45,7 +45,7 @@ class User(DynamicDocument):
     authData = DictField()
     phoneSystem=StringField()
     userId = StringField()
-    nickName = StringField()
+    nickName = IntField()
     
     
     def hash_password(self, password):
